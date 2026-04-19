@@ -10,20 +10,18 @@ export const NOTE_COLORS = [
 export const SAMPLE_NOTES = [
   {
     id: 1,
-    title: 'React Project',
-    content: 'Build floating note UI',
+    title: 'Welcome to Floating Notes',
+    content: `Thanks for installing Floating Notes.
+
+  This app lets you create small floating sticky notes that stay on your desktop while you work.
+
+  You can:
+  • Create and manage notes
+  • Open notes as floating widgets
+  • Change colors and organize ideas
+  • Keep important reminders always visible
+
+  Use the "+ New Note" button to create your first note and later pin it to your screen.`,
     color: NOTE_COLORS[0],
-  },
-  {
-    id: 2,
-    title: 'Electron',
-    content: 'Learn multi window system',
-    color: NOTE_COLORS[1],
-  },
-  {
-    id: 3,
-    title: 'Ideas',
-    content: 'Need floating manager at bottom',
-    color: NOTE_COLORS[2],
   },
 ]

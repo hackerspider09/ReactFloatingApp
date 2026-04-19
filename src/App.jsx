@@ -1,17 +1,39 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import NoteFormModal from './components/NoteFormModal'
-import { SAMPLE_NOTES, NOTE_COLORS } from './data/notesData'
+import NotePreviewModal from './components/NotePreviewModal'
+import { SAMPLE_NOTES } from './data/notesData'
 
 
 export default function App() {
-  const [notes, setNotes] = useState(SAMPLE_NOTES)
+  const [notes, setNotes] = useState([])
   const [search, setSearch] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingNote, setEditingNote] = useState(null)
+  const [openedNote, setOpenedNote] = useState(null)
 
   const filteredNotes = notes.filter((note) =>
     note.title.toLowerCase().includes(search.toLowerCase())
   )
+  
+  useEffect(() => {
+    async function load() {
+      const savedNotes = await window.electronAPI.loadNotes()
+
+      if (savedNotes.length > 0) {
+        setNotes(savedNotes)
+      } else {
+        setNotes(SAMPLE_NOTES)
+      }
+    }
+
+    load()
+  }, [])
+
+  useEffect(() => {
+    if (notes.length > 0) {
+      window.electronAPI.saveNotes(notes)
+    }
+  }, [notes])
 
   function handleSaveNote(noteData) {
     if (editingNote) {
@@ -95,11 +117,11 @@ export default function App() {
             {filteredNotes.map((note) => (
               <div
                 key={note.id}
-                className="rounded-3xl p-4 shadow-xl hover:scale-[1.02] transition min-h-[170px] max-h-[170px] flex flex-col"
+                className="rounded-3xl p-4 shadow-xl hover:scale-[1.02] transition h-[155px] flex flex-col"
                 style={{ background: note.color }}
               >
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-bold text-black line-clamp-1">
+                  <h3 className="text-lg font-bold text-black truncate line-clamp-1">
                     {note.title}
                   </h3>
 
@@ -108,29 +130,16 @@ export default function App() {
                   </button>
                 </div>
 
-                <p className="text-black/70 text-sm line-clamp-3 flex-1">
+                <p className="text-black/70 text-sm line-clamp-2 overflow-hidden flex-1">
                   {note.content}
                 </p>
 
-                <div className="flex gap-2 mt-3 flex-wrap">
-                  {NOTE_COLORS.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => {
-                        setNotes((prev) =>
-                          prev.map((n) =>
-                            n.id === note.id ? { ...n, color } : n
-                          )
-                        )
-                      }}
-                      className="w-5 h-5 rounded-full border border-black/20 hover:scale-110 transition"
-                      style={{ background: color }}
-                    />
-                  ))}
-                </div>
 
-                <div className="flex gap-2 mt-3">
-                  <button className="px-3 py-1.5 rounded-xl bg-black/10 text-black text-sm hover:bg-black/20">
+                <div className="mt-auto flex gap-2 pt-3">
+                  <button
+                    onClick={() => setOpenedNote(note)}
+                    className="px-3 py-1.5 rounded-xl bg-black/10 text-black text-sm hover:bg-black/20"
+                  >
                     Open
                   </button>
 
@@ -157,6 +166,18 @@ export default function App() {
           }}
           onSave={handleSaveNote}
           initialData={editingNote}
+        />
+
+        {/* Preview modal */}
+        <NotePreviewModal
+          open={!!openedNote}
+          note={openedNote}
+          onClose={() => setOpenedNote(null)}
+          onEdit={(note) => {
+            setOpenedNote(null)
+            setEditingNote(note)
+            setIsModalOpen(true)
+          }}
         />
       </div>
     </div>

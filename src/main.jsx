@@ -2,9 +2,16 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+import FloatingManagerWidget from './components/FloatingManagerWidget.jsx'
+
+const hash = window.location.hash
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    {hash === '#/floating-manager' ? (
+      <FloatingManagerWidget />
+    ) : (
+      <App />
+    )}
   </StrictMode>,
 )
