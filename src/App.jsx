@@ -16,6 +16,7 @@ export default function App() {
   const [settings, setSettings] = useState({
     maxFloatingNotes: 5,
     confirmDelete: false,
+    launchOnStartup: false,
   })
 
   const filteredNotes = notes.filter((note) =>

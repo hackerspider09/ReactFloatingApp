@@ -1,5 +1,6 @@
 import electron from 'electron'
 import { getSettings, getNotes, saveNotes } from '../src/data/store.js'
+import { getURL, getPreloadPath } from './utils.js'
 
 const { BrowserWindow, screen } = electron
 
@@ -58,13 +59,13 @@ export function showFloatingNotes(notes, maxCount) {
         focusable: true,
         show: true,
         webPreferences: {
-          preload: new URL('./preload.js', import.meta.url).pathname,
+          preload: getPreloadPath(),
           contextIsolation: true,
           nodeIntegration: false,
         },
       })
 
-      const url = `http://localhost:5173/#/floating-note/${note.id}`
+      const url = getURL(`floating-note/${note.id}`)
       win.loadURL(url)
 
       win.once('ready-to-show', () => {

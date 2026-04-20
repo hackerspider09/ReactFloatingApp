@@ -1,4 +1,5 @@
 import electron from 'electron'
+import { getURL, getPreloadPath } from './utils.js'
 
 const { BrowserWindow, screen } = electron
 
@@ -29,13 +30,13 @@ export function createFloatingManagerWindow() {
     movable: true,
     hasShadow: true,
     webPreferences: {
-      preload: new URL('./preload.js', import.meta.url).pathname,
+      preload: getPreloadPath(),
       contextIsolation: true,
       nodeIntegration: false,
     },
   })
 
-floatingManagerWindow.loadURL('http://localhost:5173/#/floating-manager')
+floatingManagerWindow.loadURL(getURL('floating-manager'))
 
 floatingManagerWindow.once('ready-to-show', () => {
   floatingManagerWindow.setSkipTaskbar(true)

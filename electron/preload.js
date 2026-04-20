@@ -22,4 +22,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // sync ipc
   onNotesUpdated: (callback) => ipcRenderer.on('notes-updated', (_, notes) => callback(notes)),
+
+  // startup ipc
+  setAutoLaunch: (enabled) => ipcRenderer.invoke('settings:set-autolaunch', enabled),
 })

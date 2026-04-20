@@ -1,5 +1,6 @@
 import electron from 'electron'
 import { getNotes } from '../src/data/store.js'
+import { getURL, getPreloadPath } from './utils.js'
 
 const { BrowserWindow, screen } = electron
 
@@ -37,7 +38,7 @@ export function createFloatingNotePreviewWindow(noteId) {
     focusable: true,
     show: false,
     webPreferences: {
-      preload: new URL('./preload.js', import.meta.url).pathname,
+      preload: getPreloadPath(),
       contextIsolation: true,
       nodeIntegration: false,
     },
@@ -45,7 +46,7 @@ export function createFloatingNotePreviewWindow(noteId) {
 
   previewWindows.set(noteId, win)
 
-  win.loadURL(`http://localhost:5173/#/floating-note-preview/${noteId}`)
+  win.loadURL(getURL(`floating-note-preview/${noteId}`))
 
   win.once('ready-to-show', () => {
     win.show()

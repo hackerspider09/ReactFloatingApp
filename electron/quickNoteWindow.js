@@ -1,4 +1,5 @@
 import electron from 'electron'
+import { getURL, getPreloadPath } from './utils.js'
 
 const { BrowserWindow, screen } = electron
 
@@ -27,14 +28,13 @@ export function createQuickNoteWindow() {
     show: false,
     movable: true,
     webPreferences: {
-      preload: new URL('./preload.js', import.meta.url).pathname,
+      preload: getPreloadPath(),
       contextIsolation: true,
       nodeIntegration: false,
     },
   })
 
-  quickNoteWindow.loadURL('http://localhost:5173/#/quick-note')
-  quickNoteWindow.webContents.openDevTools({ mode: 'detach' })
+  quickNoteWindow.loadURL(getURL('quick-note'))
 
   quickNoteWindow.once('ready-to-show', () => {
     quickNoteWindow.show()
