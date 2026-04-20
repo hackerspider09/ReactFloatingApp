@@ -53,6 +53,22 @@ export default function SettingsPage({ settings, onChange }) {
             </p>
           </div>
         </div>
+        <div className="bg-[#181F2E] border border-white/10 rounded-3xl p-6">
+          <h3 className="text-xl font-semibold text-white mb-2">
+            Floating Controls
+          </h3>
+
+          <p className="text-white/50 text-sm mb-6">
+            If you've closed the floating widgets, you can reactivate them here.
+          </p>
+
+          <button
+            onClick={() => window.electronAPI.openFloatingManager()}
+            className="px-6 py-3 rounded-2xl bg-cyan-500 text-black font-bold hover:scale-105 transition shadow-lg shadow-cyan-500/20"
+          >
+            Activate Floating Manager
+          </button>
+        </div>
       </div>
     </div>
   )

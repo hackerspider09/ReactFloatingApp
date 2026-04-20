@@ -79,7 +79,18 @@ ipcMain.handle('settings:save', (_, settings) => {
 
   ipcMain.handle('manager:close-widget', () => {
     hideFloatingNotes()
+    floatingNotesVisible = false
     closeFloatingManagerWindow()
+  })
+
+  ipcMain.handle('manager:open-widget', () => {
+    createFloatingManagerWindow()
+    
+    // Auto-restore notes if they were hidden by closing the manager
+    const notes = getNotes()
+    const settings = getSettings()
+    showFloatingNotes(notes, settings?.maxFloatingNotes)
+    floatingNotesVisible = true
   })
 
   createFloatingManagerWindow()

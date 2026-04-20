@@ -23,7 +23,7 @@ export function createFloatingManagerWindow() {
     resizable: false,
     alwaysOnTop: true,
     skipTaskbar: true,
-    // type: 'toolbar',
+    type: 'toolbar',
     focusable: true,
     show: false,
     movable: true,

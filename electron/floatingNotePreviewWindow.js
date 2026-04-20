@@ -33,7 +33,8 @@ export function createFloatingNotePreviewWindow(noteId) {
     resizable: true,
     alwaysOnTop: true,
     skipTaskbar: true,
-    movable: true,
+    type: 'toolbar',
+    focusable: true,
     show: false,
     webPreferences: {
       preload: new URL('./preload.js', import.meta.url).pathname,

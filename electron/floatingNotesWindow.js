@@ -33,6 +33,7 @@ export function showFloatingNotes(notes, maxCount) {
       resizable: true,
       alwaysOnTop: true,
       skipTaskbar: true,
+      type: 'toolbar',
       movable: true,
       focusable: true,
       show: true,
