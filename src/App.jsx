@@ -63,6 +63,15 @@ export default function App() {
     window.electronAPI.saveSettings(settings)
   }, [settings, loaded])
 
+  useEffect(() => {
+    if (window.electronAPI.onNotesUpdated) {
+      window.electronAPI.onNotesUpdated((updatedNotes) => {
+        console.log('Received notes update from IPC', updatedNotes)
+        setNotes(updatedNotes)
+      })
+    }
+  }, [])
+
   function handleSaveNote(noteData) {
     if (editingNote) {
       setNotes((prev) =>

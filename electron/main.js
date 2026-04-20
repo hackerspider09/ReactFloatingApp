@@ -110,8 +110,17 @@ ipcMain.handle('settings:save', (_, settings) => {
     return getNotes()
   })
 
-  ipcMain.handle('notes:save', (_, notes) => {
+  ipcMain.handle('notes:save', (event, notes) => {
     saveNotes(notes)
+
+    // Broadcast to all other windows except the sender (optional, but let's do all for simplicity)
+    BrowserWindow.getAllWindows().forEach((win) => {
+      // Don't send to the window that just sent the save request to avoid loop if not handled
+      if (win.webContents !== event.sender) {
+        win.webContents.send('notes-updated', notes)
+      }
+    })
+
     if (floatingNotesVisible) {
       const settings = getSettings()
       showFloatingNotes(notes, settings?.maxFloatingNotes)
