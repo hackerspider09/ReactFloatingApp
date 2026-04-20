@@ -6,6 +6,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   appName: 'Floating Notes',
   loadNotes: () => ipcRenderer.invoke('notes:load'),
   saveNotes: (notes) => ipcRenderer.invoke('notes:save', notes),
+  loadSettings: () => ipcRenderer.invoke('settings:load'),
+  saveSettings: (settings) => ipcRenderer.invoke('settings:save', settings),
 
   // manager ipc
   openManagerWindow: () => ipcRenderer.invoke('manager:open-main'),

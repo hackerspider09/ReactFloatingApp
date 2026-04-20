@@ -37,7 +37,7 @@ export default function FloatingManagerWidget() {
     >
       <div
         className={`relative rounded-3xl bg-[#181F2E]/95 border border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-300 ${
-          expanded ? 'w-[300px] h-[70px]' : 'w-[70px] h-[70px]'
+          expanded ? 'w-[300px] h-[90px]' : 'w-[90px] h-[90px]'
         }`}
       >
         {/* Drag layer */}

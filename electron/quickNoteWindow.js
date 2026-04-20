@@ -20,7 +20,6 @@ export function createQuickNoteWindow() {
     y: height - 620,
     frame: false,
     transparent: true,
-    backgroundColor: '#00000000',
     resizable: false,
     alwaysOnTop: true,
     skipTaskbar: true,
@@ -34,6 +33,7 @@ export function createQuickNoteWindow() {
   })
 
   quickNoteWindow.loadURL('http://localhost:5173/#/quick-note')
+  quickNoteWindow.webContents.openDevTools({ mode: 'detach' })
 
   quickNoteWindow.once('ready-to-show', () => {
     quickNoteWindow.show()

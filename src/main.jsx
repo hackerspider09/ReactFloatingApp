@@ -14,6 +14,9 @@ createRoot(document.getElementById('root')).render(
     (
       <FloatingManagerWidget />
     ) : 
+    hash.startsWith('#/floating-note/')? (
+      <FloatingNoteWidget />
+    ) :
     hash === '#/quick-note' ? (
       <QuickNotePage />
     ) :

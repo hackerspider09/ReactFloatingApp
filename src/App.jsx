@@ -2,38 +2,56 @@ import { useState, useEffect } from 'react'
 import NoteFormModal from './components/NoteFormModal'
 import NotePreviewModal from './components/NotePreviewModal'
 import { SAMPLE_NOTES } from './data/notesData'
-
+import NotePage from './page/NotePage'
+import SettingsPage from './page/SettingsPage'
 
 export default function App() {
+  const [activePage, setActivePage] = useState('notes')
   const [notes, setNotes] = useState([])
   const [search, setSearch] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingNote, setEditingNote] = useState(null)
   const [openedNote, setOpenedNote] = useState(null)
+  const [loaded, setLoaded] = useState(false)
+  const [settings, setSettings] = useState({
+    maxFloatingNotes: 5,
+  })
 
   const filteredNotes = notes.filter((note) =>
     note.title.toLowerCase().includes(search.toLowerCase())
   )
   
   useEffect(() => {
-    async function load() {
-      const savedNotes = await window.electronAPI.loadNotes()
-
-      if (savedNotes.length > 0) {
-        setNotes(savedNotes)
-      } else {
-        setNotes(SAMPLE_NOTES)
-      }
+  async function load() {
+    const savedSettings = await window.electronAPI.loadSettings()
+    if (savedSettings) {
+      setSettings(savedSettings)
     }
 
-    load()
-  }, [])
+    const savedNotes = await window.electronAPI.loadNotes()
 
-  useEffect(() => {
-    if (notes.length > 0) {
-      window.electronAPI.saveNotes(notes)
+    if (savedNotes.length > 0) {
+      setNotes(savedNotes)
+    } else {
+      setNotes(SAMPLE_NOTES)
     }
-  }, [notes])
+
+    setLoaded(true)
+  }
+
+  load()
+}, [])
+
+useEffect(() => {
+  if (!loaded) return
+
+  window.electronAPI.saveNotes(notes)
+}, [notes, loaded])
+
+useEffect(() => {
+  if (!loaded) return
+  window.electronAPI.saveSettings(settings)
+}, [settings, loaded])
 
   function handleSaveNote(noteData) {
     if (editingNote) {
@@ -65,7 +83,14 @@ export default function App() {
           Floating Notes
         </h1>
 
-        <button className="w-full text-left px-4 py-3 rounded-2xl bg-cyan-500/20 text-cyan-300 mb-3">
+        <button
+          onClick={() => setActivePage('notes')}
+          className={`w-full text-left px-4 py-3 rounded-2xl mb-3 ${
+            activePage === 'notes'
+              ? 'bg-cyan-500/20 text-cyan-300'
+              : 'hover:bg-white/5'
+          }`}
+        >
           Notes
         </button>
 
@@ -73,91 +98,43 @@ export default function App() {
           Archived
         </button>
 
-        <button className="w-full text-left px-4 py-3 rounded-2xl hover:bg-white/5 mt-auto">
+        <button
+          onClick={() => setActivePage('settings')}
+          className={`w-full text-left px-4 py-3 rounded-2xl mt-auto ${
+            activePage === 'settings'
+              ? 'bg-cyan-500/20 text-cyan-300'
+              : 'hover:bg-white/5'
+          }`}
+        >
           Settings
         </button>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col p-8 overflow-hidden">
-        {/* Top Bar */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold">My Notes</h2>
-            <p className="text-white/50 mt-1">
-              Manage your floating notes here
-            </p>
-          </div>
-
-          <button
-            onClick={() => {
+      <div className="flex-1">
+        {activePage === 'notes' ? (
+          <NotePage
+            notes={filteredNotes}
+            search={search}
+            onSearchChange={setSearch}
+            onNewNote={() => {
               setEditingNote(null)
               setIsModalOpen(true)
             }}
-            className="px-5 py-3 rounded-2xl bg-cyan-400 text-black font-semibold hover:scale-105 transition"
-          >
-            + New Note
-          </button>
-        </div>
-
-        {/* Search */}
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Search notes..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#181F2E] border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
+            onOpenNote={(note) => setOpenedNote(note)}
+            onEditNote={(note) => {
+              setEditingNote(note)
+              setIsModalOpen(true)
+            }}
           />
-        </div>
-
-        {/* Notes Grid */}
-        <div className="flex-1 overflow-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 m-1">
-            {filteredNotes.map((note) => (
-              <div
-                key={note.id}
-                className="rounded-3xl p-4 shadow-xl hover:scale-[1.02] transition h-[155px] flex flex-col"
-                style={{ background: note.color }}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-bold text-black truncate line-clamp-1">
-                    {note.title}
-                  </h3>
-
-                  <button className="text-black/60 hover:text-black">
-                    ⋮
-                  </button>
-                </div>
-
-                <p className="text-black/70 text-sm line-clamp-2 overflow-hidden flex-1">
-                  {note.content}
-                </p>
-
-
-                <div className="mt-auto flex gap-2 pt-3">
-                  <button
-                    onClick={() => setOpenedNote(note)}
-                    className="px-3 py-1.5 rounded-xl bg-black/10 text-black text-sm hover:bg-black/20"
-                  >
-                    Open
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setEditingNote(note)
-                      setIsModalOpen(true)
-                    }}
-                    className="px-3 py-1.5 rounded-xl bg-black/10 text-black text-sm hover:bg-black/20"
-                  >
-                    Edit
-                  </button>
-                </div>
-              </div>
-            ))}
+        ) : activePage === 'settings' ? (
+          <SettingsPage settings={settings} onChange={setSettings} />
+        ) : (
+          <div className="flex-1 flex items-center justify-center p-8 text-white/70">
+            Archived notes are coming soon.
           </div>
-        </div>
-        {/* Note form modal */}
+        )}
+
         <NoteFormModal
           open={isModalOpen}
           onClose={() => {
@@ -168,7 +145,6 @@ export default function App() {
           initialData={editingNote}
         />
 
-        {/* Preview modal */}
         <NotePreviewModal
           open={!!openedNote}
           note={openedNote}

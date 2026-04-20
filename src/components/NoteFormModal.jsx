@@ -6,6 +6,7 @@ export default function NoteFormModal({
   onClose,
   onSave,
   initialData = null,
+  embedded = false,
 }) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -25,22 +26,37 @@ export default function NoteFormModal({
 
   if (!open) return null
 
-  function handleSave() {
+  async function handleSave() {
     if (!title.trim()) return
 
-    onSave({
-      ...initialData,
-      title,
-      content,
-      color,
-    })
+    try {
+      await onSave({
+        ...initialData,
+        title,
+        content,
+        color,
+      })
 
-    onClose()
+      onClose()
+    } catch (err) {
+      console.error('Failed to save note:', err)
+      // Optionally show an error message to the user
+    }
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="w-[500px] max-w-[90vw] bg-[#181F2E] rounded-3xl p-6 border border-white/10 shadow-2xl">
+    // <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div
+    className={
+      embedded
+        ? 'w-full h-full flex items-center justify-center'
+        : 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50'
+    }
+  >
+      <div
+  className="w-[500px] max-w-[90vw] bg-[#181F2E] rounded-3xl p-6 border border-white/10 shadow-2xl"
+  style={embedded ? { WebkitAppRegion: 'drag' } : {}}
+>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-white">
             {initialData ? 'Edit Note' : 'Create Note'}
@@ -49,6 +65,7 @@ export default function NoteFormModal({
           <button
             onClick={onClose}
             className="w-10 h-10 rounded-xl hover:bg-white/10 text-white"
+            style={{ WebkitAppRegion: 'no-drag' }}
           >
             ✕
           </button>
@@ -61,6 +78,7 @@ export default function NoteFormModal({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full bg-[#10141F] border border-white/10 rounded-2xl px-4 py-3 text-white outline-none focus:border-cyan-400"
+            style={{ WebkitAppRegion: 'no-drag' }}
           />
 
           <textarea
@@ -69,6 +87,7 @@ export default function NoteFormModal({
             onChange={(e) => setContent(e.target.value)}
             rows={6}
             className="w-full bg-[#10141F] border border-white/10 rounded-2xl px-4 py-3 text-white outline-none resize-none focus:border-cyan-400"
+            style={{ WebkitAppRegion: 'no-drag' }}
           />
 
           <div>
@@ -84,7 +103,7 @@ export default function NoteFormModal({
                       ? 'border-white scale-110'
                       : 'border-transparent'
                   }`}
-                  style={{ background: c }}
+                  style={{ background: c,WebkitAppRegion: 'no-drag' }}
                 />
               ))}
             </div>
@@ -95,6 +114,7 @@ export default function NoteFormModal({
           <button
             onClick={onClose}
             className="px-5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white"
+            style={{ WebkitAppRegion: 'no-drag' }}
           >
             Cancel
           </button>
@@ -102,6 +122,7 @@ export default function NoteFormModal({
           <button
             onClick={handleSave}
             className="px-5 py-2.5 rounded-2xl bg-cyan-400 text-black font-semibold hover:scale-105 transition"
+            style={{ WebkitAppRegion: 'no-drag' }}
           >
             {initialData ? 'Save Changes' : 'Create Note'}
           </button>

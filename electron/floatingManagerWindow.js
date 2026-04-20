@@ -15,9 +15,9 @@ export function createFloatingManagerWindow() {
 
   floatingManagerWindow = new BrowserWindow({
     width: 320,
-    height: 80,
+    height: 110,
     x: width - 340,
-    y: height - 100,
+    y: height - 120,
     frame: false,
     transparent: true,
     resizable: false,

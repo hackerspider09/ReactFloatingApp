@@ -1,7 +1,7 @@
 import electron from 'electron'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { getNotes, saveNotes } from '../src/data/store.js'
+import { getNotes, saveNotes, getSettings, saveSettings } from '../src/data/store.js'
 
 import { createFloatingManagerWindow, closeFloatingManagerWindow } from './floatingManagerWindow.js'
 import { createQuickNoteWindow } from './quickNoteWindow.js'
@@ -30,6 +30,15 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  ipcMain.handle('settings:load', () => {
+  return getSettings()
+})
+
+ipcMain.handle('settings:save', (_, settings) => {
+  saveSettings(settings)
+  return true
+})
+
 
   ipcMain.handle('manager:open-main', () => {
     createWindow()
@@ -63,11 +72,18 @@ app.whenReady().then(() => {
     // saveNotes([])
     // return []
     
-    return getNotes()
+    const notes = getNotes()
+    console.log('loaded notes:', notes)
+    return notes
   })
 
   ipcMain.handle('notes:save', (_, notes) => {
+    console.log('notes received in main process:', notes)
+
     saveNotes(notes)
+
+    console.log('notes saved')
+
     return true
   })
 
