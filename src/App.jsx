@@ -22,44 +22,51 @@ export default function App() {
   )
   
   useEffect(() => {
-  async function load() {
-    const savedSettings = await window.electronAPI.loadSettings()
-    if (savedSettings) {
-      setSettings(savedSettings)
+    async function load() {
+      const savedSettings = await window.electronAPI.loadSettings()
+      if (savedSettings) {
+        setSettings(savedSettings)
+      }
+
+      const savedNotes = await window.electronAPI.loadNotes()
+
+      // If savedNotes is null or undefined (first time), use samples
+      // If it's an empty array, it means the user deleted all notes
+      if (savedNotes && Array.isArray(savedNotes)) {
+        if (savedNotes.length > 0) {
+          setNotes(savedNotes)
+        } else {
+          // Check if we have actually initialized before
+          // For now, let's just use a simple check: if it's an empty array, it's empty.
+          // If it's null/undefined (not found in store), use samples.
+          setNotes([])
+        }
+      } else {
+        setNotes(SAMPLE_NOTES)
+      }
+
+      setLoaded(true)
     }
 
-    const savedNotes = await window.electronAPI.loadNotes()
+    load()
+  }, [])
 
-    if (savedNotes.length > 0) {
-      setNotes(savedNotes)
-    } else {
-      setNotes(SAMPLE_NOTES)
-    }
+  useEffect(() => {
+    if (!loaded) return
 
-    setLoaded(true)
-  }
+    window.electronAPI.saveNotes(notes)
+  }, [notes, loaded])
 
-  load()
-}, [])
-
-useEffect(() => {
-  if (!loaded) return
-
-  window.electronAPI.saveNotes(notes)
-}, [notes, loaded])
-
-useEffect(() => {
-  if (!loaded) return
-  window.electronAPI.saveSettings(settings)
-}, [settings, loaded])
+  useEffect(() => {
+    if (!loaded) return
+    window.electronAPI.saveSettings(settings)
+  }, [settings, loaded])
 
   function handleSaveNote(noteData) {
     if (editingNote) {
       setNotes((prev) =>
         prev.map((note) =>
-          note.id === editingNote.id
-            ? { ...note, ...noteData }
-            : note
+          note.id === editingNote.id ? { ...note, ...noteData } : note
         )
       )
     } else {
@@ -73,6 +80,12 @@ useEffect(() => {
     }
 
     setEditingNote(null)
+  }
+
+  function handleDeleteNote(id) {
+    if (confirm('Are you sure you want to delete this note?')) {
+      setNotes((prev) => prev.filter((note) => note.id !== id))
+    }
   }
 
   return (
@@ -126,6 +139,7 @@ useEffect(() => {
               setEditingNote(note)
               setIsModalOpen(true)
             }}
+            onDeleteNote={handleDeleteNote}
           />
         ) : activePage === 'settings' ? (
           <SettingsPage settings={settings} onChange={setSettings} />

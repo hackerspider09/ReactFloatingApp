@@ -1,0 +1,6 @@
+20/04/2026
+- there is bug when i click note its not opening
+- try to rollback to prev version by stash crnt change
+- add delete if rollback
+
+- stash stash@{0}: On main: current floating notes work: and commit 18c11de (HEAD -> main) bugfix: create in widget on this work started

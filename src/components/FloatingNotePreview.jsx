@@ -31,6 +31,19 @@ export default function FloatingNotePreview() {
     }
   }
 
+  async function handleDelete() {
+    if (confirm('Are you sure you want to delete this note?')) {
+      try {
+        const notes = await window.electronAPI.loadNotes()
+        const updatedNotes = notes.filter((n) => n.id !== note.id)
+        await window.electronAPI.saveNotes(updatedNotes)
+        window.close()
+      } catch (err) {
+        console.error('Failed to delete note:', err)
+      }
+    }
+  }
+
   if (!note) return null
 
   return (
@@ -78,6 +91,13 @@ export default function FloatingNotePreview() {
                 className="px-5 py-2.5 rounded-2xl bg-black/10 text-black hover:bg-black/20"
               >
                 Edit
+              </button>
+
+              <button
+                onClick={handleDelete}
+                className="mr-auto px-5 py-2.5 rounded-2xl bg-red-500/20 text-red-500 hover:bg-red-500/30 transition"
+              >
+                Delete
               </button>
 
               <button

@@ -5,6 +5,7 @@ export default function NotePage({
   onNewNote,
   onOpenNote,
   onEditNote,
+  onDeleteNote,
 }) {
   return (
     <div className="flex-1 flex flex-col p-8 overflow-hidden">
@@ -70,6 +71,13 @@ export default function NotePage({
                     className="px-3 py-1.5 rounded-xl bg-black/10 text-black text-sm hover:bg-black/20"
                   >
                     Edit
+                  </button>
+
+                  <button
+                    onClick={() => onDeleteNote(note.id)}
+                    className="ml-auto px-3 py-1.5 rounded-xl bg-red-500/20 text-red-500 text-sm hover:bg-red-500/30 transition"
+                  >
+                    Delete
                   </button>
                 </div>
               </div>
