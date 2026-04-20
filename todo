@@ -1,6 +1,10 @@
 20/04/2026
-- there is bug when i click note its not opening
-- try to rollback to prev version by stash crnt change
-- add delete if rollback
+[x] there is bug when i click note its not opening
+[x] try to rollback to prev version by stash crnt change
+[x] add delete if rollback
 
 - stash stash@{0}: On main: current floating notes work: and commit 18c11de (HEAD -> main) bugfix: create in widget on this work started
+
+[] bug: when note edited from widget/app its color is not reflecting in widget 
+[] bug: when widgets are present and try to open application it closed
+[] bug: icon not visible in os app manager

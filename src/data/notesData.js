@@ -10,8 +10,8 @@ export const NOTE_COLORS = [
 export const SAMPLE_NOTES = [
   {
     id: 1,
-    title: 'Welcome to Floating Notes',
-    content: `Thanks for installing Floating Notes.
+    title: 'Welcome to FloatNote',
+    content: `Thanks for installing FloatNote.
 
   This app lets you create small floating sticky notes that stay on your desktop while you work.
 

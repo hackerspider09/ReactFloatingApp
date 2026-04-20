@@ -115,7 +115,7 @@ export default function App() {
       {/* Sidebar */}
       <div className="w-64 bg-[#181F2E] border-r border-white/10 p-5 flex flex-col">
         <h1 className="text-2xl font-bold text-cyan-400 mb-8">
-          Floating Notes
+          FloatNote
         </h1>
 
         <button

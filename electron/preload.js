@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron')
 console.log('PRELOAD LOADED')
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  appName: 'Floating Notes',
+  appName: 'FloatNote',
   loadNotes: () => ipcRenderer.invoke('notes:load'),
   saveNotes: (notes) => ipcRenderer.invoke('notes:save', notes),
   loadSettings: () => ipcRenderer.invoke('settings:load'),

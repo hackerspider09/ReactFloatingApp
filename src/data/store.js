@@ -1,7 +1,7 @@
 import Store from 'electron-store'
 
 const store = new Store({
-  name: 'floating-notes',
+  name: 'floatnote',
   defaults: {
     notes: [],
     settings: {

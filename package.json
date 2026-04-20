@@ -1,10 +1,10 @@
 {
-  "name": "floating-notes",
+  "name": "floatnote",
   "main": "electron/main.js",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "productName": "Floating Notes",
+  "productName": "FloatNote",
   "description": "A floating sticky notes desktop application",
   "author": {
     "name": "hackerspider09",
@@ -20,8 +20,8 @@
     "dist:all": "vite build && electron-builder --linux --win"
   },
   "build": {
-    "appId": "com.hackerspider09.floating-notes",
-    "productName": "Floating Notes",
+    "appId": "com.hackerspider09.floatnote",
+    "productName": "FloatNote",
     "directories": {
       "output": "release"
     },

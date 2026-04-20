@@ -1,4 +1,4 @@
-# Floating Notes
+# FloatNote
 
 A lightweight, cross-platform desktop application for floating sticky notes. Notes appear as small widgets on your desktop that you can click to preview, edit, or delete. Manage all your notes from a clean dashboard interface.
 
@@ -45,8 +45,8 @@ npm run dist:linux
 ```
 
 **Output** (in `release/` directory):
-- `Floating Notes-1.0.0.AppImage` — Portable, no installation required
-- `floating-notes_1.0.0_amd64.deb` — Debian/Ubuntu package
+- `FloatNote-1.0.0.AppImage` — Portable, no installation required
+- `floatnote_1.0.0_amd64.deb` — Debian/Ubuntu package
 
 ### Build for Windows
 
@@ -55,7 +55,7 @@ npm run dist:win
 ```
 
 **Output** (in `release/` directory):
-- `Floating Notes Setup 1.0.0.exe` — NSIS installer (user-level, no admin needed)
+- `FloatNote Setup 1.0.0.exe` — NSIS installer (user-level, no admin needed)
 
 ### Build for All Platforms
 
@@ -76,11 +76,11 @@ npm run dist:all
 1. Download the `.AppImage` file from the releases.
 2. Make it executable:
    ```bash
-   chmod +x "Floating Notes-1.0.0.AppImage"
+   chmod +x "FloatNote-1.0.0.AppImage"
    ```
 3. Run it:
    ```bash
-   ./"Floating Notes-1.0.0.AppImage"
+   ./"FloatNote-1.0.0.AppImage"
    ```
 
 #### Debian/Ubuntu (.deb)
@@ -88,16 +88,16 @@ npm run dist:all
 1. Download the `.deb` file.
 2. Install it:
    ```bash
-   sudo dpkg -i floating-notes_1.0.0_amd64.deb
+   sudo dpkg -i floatnote_1.0.0_amd64.deb
    ```
 3. Launch from your application menu or run:
    ```bash
-   floating-notes
+   floatnote
    ```
 
 ### Windows
 
-1. Download the `Floating Notes Setup 1.0.0.exe` installer.
+1. Download the `FloatNote Setup 1.0.0.exe` installer.
 2. Run the installer — it does **not** require administrator privileges.
 3. Choose your installation directory (defaults to user AppData).
 4. Launch from the Start Menu or Desktop shortcut.
@@ -123,23 +123,23 @@ All settings are accessible from the **Settings** page in the main dashboard:
 #### AppImage
 Simply delete the `.AppImage` file. To also remove app data:
 ```bash
-rm -rf ~/.config/floating-notes
+rm -rf ~/.config/floatnote
 ```
 
 #### Debian/Ubuntu (.deb)
 ```bash
-sudo dpkg -r floating-notes
+sudo dpkg -r floatnote
 # Remove app data
-rm -rf ~/.config/floating-notes
+rm -rf ~/.config/floatnote
 ```
 
 ### Windows
 
 1. Open **Settings → Apps → Installed Apps**.
-2. Find **Floating Notes** and click **Uninstall**.
+2. Find **FloatNote** and click **Uninstall**.
 3. To also remove app data, delete:
    ```
-   %APPDATA%\floating-notes
+   %APPDATA%\floatnote
    ```
 
 ---
@@ -150,11 +150,11 @@ The app uses `electron-store` to persist notes and settings as JSON files. No ex
 
 | OS | Data Location |
 |---|---|
-| **Linux** | `~/.config/floating-notes/` |
-| **Windows** | `%APPDATA%\floating-notes\` |
+| **Linux** | `~/.config/floatnote/` |
+| **Windows** | `%APPDATA%\floatnote\` |
 
 Inside this directory you'll find:
-- `floating-notes.json` — All your notes and settings
+- `floatnote.json` — All your notes and settings
 
 > **Tip**: You can back up or transfer your notes by copying this file.
 

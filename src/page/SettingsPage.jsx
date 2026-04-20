@@ -4,14 +4,14 @@ export default function SettingsPage({ settings, onChange }) {
       <div className="mb-10">
         <h2 className="text-3xl font-bold text-white">Settings</h2>
         <p className="text-white/50 mt-2">
-          Configure Floating Notes behavior and performance
+          Configure FloatNote behavior and performance
         </p>
       </div>
 
       <div className="max-w-3xl space-y-6">
         <div className="bg-[#181F2E] border border-white/10 rounded-3xl p-6">
           <h3 className="text-xl font-semibold text-white mb-2">
-            Floating Notes
+            FloatNote
           </h3>
 
           <p className="text-white/50 text-sm mb-6">
@@ -89,7 +89,7 @@ export default function SettingsPage({ settings, onChange }) {
                 Launch on Startup
               </h3>
               <p className="text-white/50 text-sm">
-                Automatically start Floating Notes when your computer boots up.
+                Automatically start FloatNote when your computer boots up.
               </p>
             </div>
 
