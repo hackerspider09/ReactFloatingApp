@@ -25,8 +25,8 @@ export function showFloatingNotes(notes, maxCount) {
 
   // 2. Create or update windows for visible notes
   visibleNotes.forEach((note, index) => {
-    const xPos = width - 90
-    const yPos = 20 + index * 85
+    const xPos = width - 80
+    const yPos = 40 + index * 85
     
     // Update position in note object for persistence later
     note.x = xPos
