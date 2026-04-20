@@ -112,6 +112,10 @@ ipcMain.handle('settings:save', (_, settings) => {
 
   ipcMain.handle('notes:save', (_, notes) => {
     saveNotes(notes)
+    if (floatingNotesVisible) {
+      const settings = getSettings()
+      showFloatingNotes(notes, settings?.maxFloatingNotes)
+    }
     return true
   })
 

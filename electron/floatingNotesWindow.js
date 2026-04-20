@@ -6,69 +6,83 @@ const { BrowserWindow, screen } = electron
 const floatingWindows = new Map()
 
 export function showFloatingNotes(notes, maxCount) {
-  hideFloatingNotes()
-
   const settings = getSettings()
   const visibleCount = maxCount ?? settings?.maxFloatingNotes ?? 5
-
   const display = screen.getPrimaryDisplay()
-  const { width, height } = display.workAreaSize
+  const { width } = display.workAreaSize
 
-  const allNotes = getNotes()
-  const visibleNotes = allNotes.slice(0, Math.min(visibleCount, 12))
+  const visibleNotes = notes.slice(0, Math.min(visibleCount, 12))
+  const visibleNoteIds = new Set(visibleNotes.map((n) => n.id))
 
+  // 1. Close windows for notes that should no longer be visible
+  for (const [id, win] of floatingWindows.entries()) {
+    if (!visibleNoteIds.has(id)) {
+      win.close()
+      floatingWindows.delete(id)
+    }
+  }
+
+  // 2. Create or update windows for visible notes
   visibleNotes.forEach((note, index) => {
     const xPos = width - 90
     const yPos = 20 + index * 85
-    console.log('creating floating note window for note id:', note.id, 'position:', xPos, yPos)
-
-    const win = new BrowserWindow({
-      width: 80,
-      height: 70,
-      x: xPos,
-      y: yPos,
-      frame: false,
-      transparent: true,
-      backgroundColor: '#00000000',
-      resizable: true,
-      alwaysOnTop: true,
-      skipTaskbar: true,
-      type: 'toolbar',
-      movable: true,
-      focusable: true,
-      show: true,
-      webPreferences: {
-        preload: new URL('./preload.js', import.meta.url).pathname,
-        contextIsolation: true,
-        nodeIntegration: false,
-      },
-    })
-
-    const url = `http://localhost:5173/#/floating-note/${note.id}`
-    win.loadURL(url)
-    console.log('floating note window loadURL:', url)
-
-    // Update note with position
+    
+    // Update position in note object for persistence later
     note.x = xPos
     note.y = yPos
 
-    win.once('ready-to-show', () => {
-      console.log('floating note ready-to-show:', note.id)
-      win.show()
-      win.setAlwaysOnTop(true)
-      win.setSkipTaskbar(true)
-    })
+    if (floatingWindows.has(note.id)) {
+      // If window already exists, just update position (if changed)
+      const win = floatingWindows.get(note.id)
+      const currentPos = win.getPosition()
+      if (currentPos[0] !== xPos || currentPos[1] !== yPos) {
+        win.setPosition(xPos, yPos)
+      }
+    } else {
+      // If window doesn't exist, create it
+      console.log('creating floating note window for note id:', note.id, 'position:', xPos, yPos)
 
-    win.on('closed', () => {
-      floatingWindows.delete(note.id)
-      console.log('floating note window closed:', note.id)
-    })
+      const win = new BrowserWindow({
+        width: 80,
+        height: 70,
+        x: xPos,
+        y: yPos,
+        frame: false,
+        transparent: true,
+        backgroundColor: '#00000000',
+        resizable: true,
+        alwaysOnTop: true,
+        skipTaskbar: true,
+        type: 'toolbar',
+        movable: true,
+        focusable: true,
+        show: true,
+        webPreferences: {
+          preload: new URL('./preload.js', import.meta.url).pathname,
+          contextIsolation: true,
+          nodeIntegration: false,
+        },
+      })
 
-    floatingWindows.set(note.id, win)
+      const url = `http://localhost:5173/#/floating-note/${note.id}`
+      win.loadURL(url)
+
+      win.once('ready-to-show', () => {
+        win.show()
+        win.setAlwaysOnTop(true)
+        win.setSkipTaskbar(true)
+      })
+
+      win.on('closed', () => {
+        floatingWindows.delete(note.id)
+      })
+
+      floatingWindows.set(note.id, win)
+    }
   })
 
-  // Save notes with updated positions
-  saveNotes(allNotes)
+  // Save notes with updated positions if needed (we modified the objects in visibleNotes)
+  saveNotes(notes)
 }
 
 export function hideFloatingNotes() {
