@@ -42,10 +42,18 @@ export default function FloatingNoteWidget() {
         >
           <button
             onClick={() => window.electronAPI.openFloatingNotePreview(note.id)}
-            className="absolute inset-0 flex items-center justify-center text-black text-[11px] font-bold"
-            style={{ WebkitAppRegion: 'no-drag', background: 'transparent', border: 'none' }}
+            className="w-9 h-9 rounded-full flex items-center justify-center text-black bg-black/10 hover:bg-black/20 transition-colors shadow-sm"
+            style={{ 
+              WebkitAppRegion: 'no-drag', 
+              background: 'transparent', 
+              border: 'none',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}
           >
-            <FiPaperclip size={18} />
+            <FiPaperclip size={24} />
           </button>
         </div>
       </div>

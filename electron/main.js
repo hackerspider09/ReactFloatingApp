@@ -72,10 +72,13 @@ ipcMain.handle('settings:save', (_, settings) => {
   showFloatingNotes(initialNotes, initialSettings?.maxFloatingNotes)
 
   ipcMain.handle('manager:magnet', () => {
-    console.log('magnet/rearrange notes later')
+    import('./floatingNotesWindow.js').then(module => {
+      module.rearrangeNotes()
+    })
   })
 
   ipcMain.handle('manager:close-widget', () => {
+    hideFloatingNotes()
     closeFloatingManagerWindow()
   })
 

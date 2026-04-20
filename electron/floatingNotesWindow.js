@@ -74,3 +74,28 @@ export function hideFloatingNotes() {
   floatingWindows.forEach((win) => win.close())
   floatingWindows.clear()
 }
+
+export function rearrangeNotes() {
+  const display = screen.getPrimaryDisplay()
+  const { width } = display.workAreaSize
+  
+  const allNotes = getNotes()
+  
+  let index = 0
+  floatingWindows.forEach((win, id) => {
+    const xPos = width - 90
+    const yPos = 20 + index * 85
+    win.setPosition(xPos, yPos)
+    
+    // Update store for persistence
+    const note = allNotes.find(n => n.id === id)
+    if (note) {
+      note.x = xPos
+      note.y = yPos
+    }
+    
+    index++
+  })
+  
+  saveNotes(allNotes)
+}
