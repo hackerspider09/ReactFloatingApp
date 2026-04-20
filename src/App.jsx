@@ -145,7 +145,7 @@ export default function App() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1">
+      <div className="flex-1 h-screen flex flex-col overflow-hidden">
         {activePage === 'notes' ? (
           <NotePage
             notes={filteredNotes}
