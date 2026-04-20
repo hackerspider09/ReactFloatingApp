@@ -34,7 +34,7 @@ export default function NotePage({
         />
       </div>
 
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto custom-scrollbar">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 m-1">
           {notes.length > 0 ? (
             notes.map((note) => (

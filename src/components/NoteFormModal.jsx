@@ -45,53 +45,62 @@ export default function NoteFormModal({
   }
 
   return (
-    // <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
     <div
-    className={
-      embedded
-        ? 'w-full h-full flex items-center justify-center'
-        : 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50'
-    }
-  >
+      className={
+        embedded
+          ? 'w-full h-full flex items-center justify-center'
+          : 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50'
+      }
+    >
       <div
-  className="w-[500px] max-w-[90vw] bg-[#181F2E] rounded-3xl p-6 border border-white/10 shadow-2xl"
-  style={embedded ? { WebkitAppRegion: 'drag' } : {}}
->
+        className="w-[550px] max-w-[90vw] rounded-3xl p-6 shadow-2xl overflow-hidden"
+        style={{ 
+          background: color || NOTE_COLORS[0],
+          border: embedded ? 'none' : '1px solid rgba(0,0,0,0.05)',
+          WebkitAppRegion: embedded ? 'drag' : 'none'
+        }}
+      >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white">
+          <h2 className="text-3xl font-bold text-black">
             {initialData ? 'Edit Note' : 'Create Note'}
           </h2>
 
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-xl hover:bg-white/10 text-white"
+            className="w-10 h-10 rounded-xl hover:bg-black/10 text-black"
             style={{ WebkitAppRegion: 'no-drag' }}
           >
             ✕
           </button>
         </div>
 
-        <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Note title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full bg-[#10141F] border border-white/10 rounded-2xl px-4 py-3 text-white outline-none focus:border-cyan-400"
-            style={{ WebkitAppRegion: 'no-drag' }}
-          />
-
-          <textarea
-            placeholder="Write your note..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={6}
-            className="w-full bg-[#10141F] border border-white/10 rounded-2xl px-4 py-3 text-white outline-none resize-none focus:border-cyan-400"
-            style={{ WebkitAppRegion: 'no-drag' }}
-          />
+        <div className="space-y-4 pr-1">
+          <div>
+            <p className="text-black/60 mb-2 text-sm ml-1">Title</p>
+            <input
+              type="text"
+              placeholder="Note title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full bg-black/5 border-black/5 rounded-2xl px-4 py-3 text-black outline-none focus:border-black/20 border placeholder:text-black/30"
+              style={{ WebkitAppRegion: 'no-drag' }}
+            />
+          </div>
 
           <div>
-            <p className="text-white/60 mb-3 text-sm">Color</p>
+            <p className="text-black/60 mb-2 text-sm ml-1">Content</p>
+            <textarea
+              placeholder="Write your note..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={8}
+              className="w-full bg-black/5 border-black/5 rounded-2xl px-4 py-3 text-black outline-none resize-none focus:border-black/20 border placeholder:text-black/30 custom-scrollbar"
+              style={{ WebkitAppRegion: 'no-drag' }}
+            />
+          </div>
+
+          <div>
+            <p className="text-black/60 mb-3 text-sm ml-1">Theme Color</p>
 
             <div className="flex gap-3 flex-wrap">
               {NOTE_COLORS.map((c) => (
@@ -100,10 +109,10 @@ export default function NoteFormModal({
                   onClick={() => setColor(c)}
                   className={`w-8 h-8 rounded-full border-2 transition ${
                     color === c
-                      ? 'border-white scale-110'
+                      ? 'border-black scale-110'
                       : 'border-transparent'
                   }`}
-                  style={{ background: c,WebkitAppRegion: 'no-drag' }}
+                  style={{ background: c, WebkitAppRegion: 'no-drag' }}
                 />
               ))}
             </div>
@@ -113,7 +122,7 @@ export default function NoteFormModal({
         <div className="flex justify-end gap-3 mt-8">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white"
+            className="px-5 py-2.5 rounded-2xl bg-black/10 hover:bg-black/20 text-black transition"
             style={{ WebkitAppRegion: 'no-drag' }}
           >
             Cancel
@@ -121,7 +130,7 @@ export default function NoteFormModal({
 
           <button
             onClick={handleSave}
-            className="px-5 py-2.5 rounded-2xl bg-cyan-400 text-black font-semibold hover:scale-105 transition"
+            className="px-5 py-2.5 rounded-2xl bg-black text-white font-semibold hover:scale-105 transition"
             style={{ WebkitAppRegion: 'no-drag' }}
           >
             {initialData ? 'Save Changes' : 'Create Note'}
