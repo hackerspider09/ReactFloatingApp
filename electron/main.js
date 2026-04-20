@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 import { getNotes, saveNotes } from '../src/data/store.js'
 
 import { createFloatingManagerWindow, closeFloatingManagerWindow } from './floatingManagerWindow.js'
+import { createQuickNoteWindow } from './quickNoteWindow.js'
 
 const { app, BrowserWindow, ipcMain } = electron
 
@@ -11,6 +12,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 function createWindow() {
+  
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -47,8 +49,14 @@ app.whenReady().then(() => {
 
   createFloatingManagerWindow()
 
-  
 
+  // create note window
+  ipcMain.handle('note:create-window', () => {
+    createQuickNoteWindow()
+  })
+
+  
+  // main app
   ipcMain.handle('notes:load', () => {
     
     // electron store clear ~/.config/ElectronFloatingNote/config.json or below

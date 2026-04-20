@@ -7,8 +7,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   loadNotes: () => ipcRenderer.invoke('notes:load'),
   saveNotes: (notes) => ipcRenderer.invoke('notes:save', notes),
 
+  // manager ipc
   openManagerWindow: () => ipcRenderer.invoke('manager:open-main'),
   toggleNotesVisibility: () => ipcRenderer.invoke('manager:toggle-visibility'),
   magnetNotes: () => ipcRenderer.invoke('manager:magnet'),
   closeFloatingManager: () => ipcRenderer.invoke('manager:close-widget'),
+
+  // create window ipc
+  createQuickNoteWindow: () => ipcRenderer.invoke('note:create-window'),
+
 })
