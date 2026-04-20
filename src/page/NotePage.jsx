@@ -6,6 +6,7 @@ export default function NotePage({
   onOpenNote,
   onEditNote,
   onDeleteNote,
+  onRefresh,
 }) {
   return (
     <div className="flex-1 flex flex-col p-8 overflow-hidden">
@@ -17,12 +18,20 @@ export default function NotePage({
           </p>
         </div>
 
-        <button
-          onClick={onNewNote}
-          className="px-5 py-3 rounded-2xl bg-cyan-400 text-black font-semibold hover:scale-105 transition"
-        >
-          + New Note
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={onRefresh}
+            className="px-5 py-3 rounded-2xl bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition"
+          >
+            Refresh
+          </button>
+          <button
+            onClick={onNewNote}
+            className="px-5 py-3 rounded-2xl bg-cyan-400 text-black font-semibold hover:scale-105 transition"
+          >
+            + New Note
+          </button>
+        </div>
       </div>
 
       <div className="mb-6">

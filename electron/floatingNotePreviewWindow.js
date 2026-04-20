@@ -3,11 +3,11 @@ import { getNotes } from '../src/data/store.js'
 
 const { BrowserWindow, screen } = electron
 
-let floatingNotePreviewWindow = null
+const previewWindows = new Map()
 
 export function createFloatingNotePreviewWindow(noteId) {
-  if (floatingNotePreviewWindow) {
-    floatingNotePreviewWindow.focus()
+  if (previewWindows.has(noteId)) {
+    previewWindows.get(noteId).focus()
     return
   }
 
@@ -23,7 +23,7 @@ export function createFloatingNotePreviewWindow(noteId) {
     : Math.max(width - windowWidth - 12, 12)
   const y = note?.y ?? 100
 
-  floatingNotePreviewWindow = new BrowserWindow({
+  const win = new BrowserWindow({
     width: windowWidth,
     height: windowHeight,
     x,
@@ -43,15 +43,17 @@ export function createFloatingNotePreviewWindow(noteId) {
     },
   })
 
-  floatingNotePreviewWindow.loadURL(`http://localhost:5173/#/floating-note-preview/${noteId}`)
+  previewWindows.set(noteId, win)
 
-  floatingNotePreviewWindow.once('ready-to-show', () => {
-    floatingNotePreviewWindow.show()
-    floatingNotePreviewWindow.setAlwaysOnTop(true)
-    floatingNotePreviewWindow.setSkipTaskbar(true)
+  win.loadURL(`http://localhost:5173/#/floating-note-preview/${noteId}`)
+
+  win.once('ready-to-show', () => {
+    win.show()
+    win.setAlwaysOnTop(true)
+    win.setSkipTaskbar(true)
   })
 
-  floatingNotePreviewWindow.on('closed', () => {
-    floatingNotePreviewWindow = null
+  win.on('closed', () => {
+    previewWindows.delete(noteId)
   })
 }

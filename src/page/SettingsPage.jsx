@@ -53,6 +53,34 @@ export default function SettingsPage({ settings, onChange }) {
             </p>
           </div>
         </div>
+
+        <div className="bg-[#181F2E] border border-white/10 rounded-3xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Delete Confirmation
+              </h3>
+              <p className="text-white/50 text-sm">
+                Show a confirmation prompt before deleting a note.
+              </p>
+            </div>
+
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={settings.confirmDelete}
+                onChange={(e) =>
+                  onChange({
+                    ...settings,
+                    confirmDelete: e.target.checked,
+                  })
+                }
+              />
+              <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
+            </label>
+          </div>
+        </div>
         <div className="bg-[#181F2E] border border-white/10 rounded-3xl p-6">
           <h3 className="text-xl font-semibold text-white mb-2">
             Floating Controls

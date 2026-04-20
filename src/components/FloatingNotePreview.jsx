@@ -3,6 +3,7 @@ import NoteFormModal from './NoteFormModal'
 
 export default function FloatingNotePreview() {
   const [note, setNote] = useState(null)
+  const [settings, setSettings] = useState({ confirmDelete: false })
   const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
@@ -11,6 +12,11 @@ export default function FloatingNotePreview() {
       const id = Number(hashParts[hashParts.length - 1])
       const notes = await window.electronAPI.loadNotes()
       setNote(notes.find((n) => n.id === id) || null)
+
+      const savedSettings = await window.electronAPI.loadSettings()
+      if (savedSettings) {
+        setSettings(prev => ({ ...prev, ...savedSettings }))
+      }
     }
 
     load()
@@ -32,7 +38,7 @@ export default function FloatingNotePreview() {
   }
 
   async function handleDelete() {
-    if (confirm('Are you sure you want to delete this note?')) {
+    const deleteAction = async () => {
       try {
         const notes = await window.electronAPI.loadNotes()
         const updatedNotes = notes.filter((n) => n.id !== note.id)
@@ -41,6 +47,14 @@ export default function FloatingNotePreview() {
       } catch (err) {
         console.error('Failed to delete note:', err)
       }
+    }
+
+    if (settings.confirmDelete) {
+      if (confirm('Are you sure you want to delete this note?')) {
+        await deleteAction()
+      }
+    } else {
+      await deleteAction()
     }
   }
 

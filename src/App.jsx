@@ -15,6 +15,7 @@ export default function App() {
   const [loaded, setLoaded] = useState(false)
   const [settings, setSettings] = useState({
     maxFloatingNotes: 5,
+    confirmDelete: false,
   })
 
   const filteredNotes = notes.filter((note) =>
@@ -25,7 +26,7 @@ export default function App() {
     async function load() {
       const savedSettings = await window.electronAPI.loadSettings()
       if (savedSettings) {
-        setSettings(savedSettings)
+        setSettings(prev => ({ ...prev, ...savedSettings }))
       }
 
       const savedNotes = await window.electronAPI.loadNotes()
@@ -83,8 +84,19 @@ export default function App() {
   }
 
   function handleDeleteNote(id) {
-    if (confirm('Are you sure you want to delete this note?')) {
+    if (settings.confirmDelete) {
+      if (confirm('Are you sure you want to delete this note?')) {
+        setNotes((prev) => prev.filter((note) => note.id !== id))
+      }
+    } else {
       setNotes((prev) => prev.filter((note) => note.id !== id))
+    }
+  }
+
+  async function handleRefreshNotes() {
+    const savedNotes = await window.electronAPI.loadNotes()
+    if (savedNotes) {
+      setNotes(savedNotes)
     }
   }
 
@@ -140,6 +152,7 @@ export default function App() {
               setIsModalOpen(true)
             }}
             onDeleteNote={handleDeleteNote}
+            onRefresh={handleRefreshNotes}
           />
         ) : activePage === 'settings' ? (
           <SettingsPage settings={settings} onChange={setSettings} />
