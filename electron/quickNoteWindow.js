@@ -14,15 +14,16 @@ export function createQuickNoteWindow() {
   const { width, height } = display.workAreaSize
 
   quickNoteWindow = new BrowserWindow({
-    width: 520,
-    height: 520,
-    x: width - 560,
-    y: height - 620,
+    width: 550,
+    height: 650,
+    x: width - 580,
+    y: height - 680,
     frame: false,
     transparent: true,
-    resizable: false,
+    resizable: true,
     alwaysOnTop: true,
     skipTaskbar: true,
+    type: 'toolbar',
     show: false,
     movable: true,
     webPreferences: {

@@ -25,7 +25,7 @@ export default function QuickNotePage() {
 
     console.log('saved successfully')
 
-    // window.close()
+    window.close()
   } catch (err) {
     console.error('save failed', err)
   }
