@@ -25,7 +25,7 @@ export default function NotePreviewModal({
           </button>
         </div>
 
-        <div className="text-black/80 whitespace-pre-wrap leading-7 max-h-[300px] overflow-auto">
+        <div className="text-black/80 whitespace-pre-wrap leading-7 max-h-[300px] overflow-auto custom-scrollbar">
           {note.content}
         </div>
 

@@ -17,7 +17,7 @@ export function createFloatingNotePreviewWindow(noteId) {
   const { width, height } = display.workAreaSize
 
   const windowWidth = 520
-  const windowHeight = 500
+  const windowHeight = 550
   const x = note?.x
     ? Math.max(note.x - windowWidth - 12, 12)
     : Math.max(width - windowWidth - 12, 12)

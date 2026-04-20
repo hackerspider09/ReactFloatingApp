@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import NoteFormModal from './NoteFormModal'
 
 export default function FloatingNotePreview() {
   const [note, setNote] = useState(null)
+  const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -14,6 +16,21 @@ export default function FloatingNotePreview() {
     load()
   }, [])
 
+  async function handleSave(updatedData) {
+    try {
+      const notes = await window.electronAPI.loadNotes()
+      const updatedNotes = notes.map((n) =>
+        n.id === note.id ? { ...n, ...updatedData } : n
+      )
+
+      await window.electronAPI.saveNotes(updatedNotes)
+      setNote({ ...note, ...updatedData })
+      setIsEditing(false)
+    } catch (err) {
+      console.error('Failed to save note:', err)
+    }
+  }
+
   if (!note) return null
 
   return (
@@ -25,7 +42,6 @@ export default function FloatingNotePreview() {
         <div className="flex items-center justify-between p-5" style={{ WebkitAppRegion: 'drag' }}>
           <div>
             <h2 className="text-2xl font-bold text-black">{note.title}</h2>
-            <p className="text-black/60 text-sm">Floating note details</p>
           </div>
 
           <button
@@ -38,7 +54,10 @@ export default function FloatingNotePreview() {
         </div>
 
         <div className="px-5 pb-5">
-          <div className="rounded-3xl bg-white/80 p-4 text-black/80 max-h-90 overflow-auto custom-scrollbar whitespace-pre-wrap leading-7">
+          <div 
+            className="rounded-3xl p-5 text-black/80 overflow-y-auto custom-scrollbar whitespace-pre-wrap leading-relaxed shadow-inner"
+            style={{ maxHeight: '350px',background: note.color }}
+          >
             {note.content}
           </div>
         </div>
@@ -52,13 +71,20 @@ export default function FloatingNotePreview() {
           </button>
 
           <button
-            onClick={() => window.close()}
+            onClick={() => setIsEditing(true)}
             className="px-5 py-2.5 rounded-2xl bg-black text-white hover:opacity-90"
           >
             Edit
           </button>
         </div>
       </div>
+
+      <NoteFormModal
+        open={isEditing}
+        onClose={() => setIsEditing(false)}
+        onSave={handleSave}
+        initialData={note}
+      />
     </div>
   )
 }

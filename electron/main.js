@@ -46,7 +46,7 @@ ipcMain.handle('settings:save', (_, settings) => {
     createWindow()
   })
 
-  let floatingNotesVisible = false
+  let floatingNotesVisible = true
 
   ipcMain.handle('manager:toggle-visibility', () => {
     const notes = getNotes()
@@ -65,6 +65,11 @@ ipcMain.handle('settings:save', (_, settings) => {
 
     return floatingNotesVisible
   })
+
+  // Initial show on startup
+  const initialNotes = getNotes()
+  const initialSettings = getSettings()
+  showFloatingNotes(initialNotes, initialSettings?.maxFloatingNotes)
 
   ipcMain.handle('manager:magnet', () => {
     console.log('magnet/rearrange notes later')
