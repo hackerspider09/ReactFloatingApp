@@ -9,7 +9,7 @@ export default function NotePreviewModal({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
       <div
-        className="w-[550px] max-w-[90vw] rounded-3xl p-6 shadow-2xl"
+        className="w-[550px] max-w-[90vw] max-h-[500px] rounded-3xl p-6 shadow-2xl overflow-hidden"
         style={{ background: note.color }}
       >
         <div className="flex items-start justify-between mb-5">
@@ -25,7 +25,7 @@ export default function NotePreviewModal({
           </button>
         </div>
 
-        <div className="text-black/80 whitespace-pre-wrap leading-7 min-h-[150px]">
+        <div className="text-black/80 whitespace-pre-wrap leading-7 max-h-[300px] overflow-auto">
           {note.content}
         </div>
 

@@ -1,14 +1,26 @@
 import { useEffect, useState } from 'react'
+import { FiPaperclip } from 'react-icons/fi'
 
 export default function FloatingNoteWidget() {
   const [note, setNote] = useState(null)
 
   useEffect(() => {
     async function load() {
-      const id = Number(window.location.hash.split('/').pop())
+      const hashParts = window.location.hash.split('/')
+      const id = Number(hashParts[hashParts.length - 1])
       const notes = await window.electronAPI.loadNotes()
-      const found = notes.find((n) => n.id === id)
-      setNote(found)
+      setNote(notes.find((n) => n.id === id) || null)
+    }
+
+    load()
+  }, [])
+
+  useEffect(() => {
+    async function load() {
+      const hashParts = window.location.hash.split('/')
+      const id = Number(hashParts[hashParts.length - 1])
+      const notes = await window.electronAPI.loadNotes()
+      setNote(notes.find((n) => n.id === id) || null)
     }
 
     load()
@@ -17,22 +29,24 @@ export default function FloatingNoteWidget() {
   if (!note) return null
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center p-2">
-      <div
-        className="w-[78px] h-[78px] rounded-3xl shadow-2xl border border-black/10 flex items-center justify-center cursor-pointer hover:scale-105 transition"
-        style={{
-          background: note.color,
-          WebkitAppRegion: 'drag',
-        }}
-        onDoubleClick={() => {
-          window.location.hash = `#/floating-note-open/${note.id}`
-        }}
-      >
+    <div className="w-full h-full flex items-center justify-center pointer-events-none" style={{ background: 'transparent' }}>
+      <div className="pointer-events-auto">
         <div
-          className="text-black text-xs font-bold text-center px-2 line-clamp-3"
-          style={{ WebkitAppRegion: 'no-drag' }}
+          className="relative rounded-xl shadow-2xl overflow-hidden"
+          style={{
+            width: 70,
+            height: 70,
+            background: note.color,
+            WebkitAppRegion: 'drag',
+          }}
         >
-          {note.title}
+          <button
+            onClick={() => window.electronAPI.openFloatingNotePreview(note.id)}
+            className="absolute inset-0 flex items-center justify-center text-black text-[11px] font-bold"
+            style={{ WebkitAppRegion: 'no-drag', background: 'transparent', border: 'none' }}
+          >
+            <FiPaperclip size={18} />
+          </button>
         </div>
       </div>
     </div>

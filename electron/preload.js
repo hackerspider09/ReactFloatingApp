@@ -17,5 +17,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // create window ipc
   createQuickNoteWindow: () => ipcRenderer.invoke('note:create-window'),
+  openFloatingNotePreview: (noteId) => ipcRenderer.invoke('note:open-preview', noteId),
 
 })

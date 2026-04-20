@@ -5,6 +5,8 @@ import { getNotes, saveNotes, getSettings, saveSettings } from '../src/data/stor
 
 import { createFloatingManagerWindow, closeFloatingManagerWindow } from './floatingManagerWindow.js'
 import { createQuickNoteWindow } from './quickNoteWindow.js'
+import { showFloatingNotes, hideFloatingNotes } from './floatingNotesWindow.js'
+import { createFloatingNotePreviewWindow } from './floatingNotePreviewWindow.js'
 
 const { app, BrowserWindow, ipcMain } = electron
 
@@ -44,8 +46,24 @@ ipcMain.handle('settings:save', (_, settings) => {
     createWindow()
   })
 
+  let floatingNotesVisible = false
+
   ipcMain.handle('manager:toggle-visibility', () => {
-    console.log('toggle note visibility later')
+    const notes = getNotes()
+    const settings = getSettings()
+    console.log('manager:toggle-visibility called, notes count:', notes.length, 'maxFloatingNotes:', settings?.maxFloatingNotes, 'visible:', floatingNotesVisible)
+
+    if (floatingNotesVisible) {
+      hideFloatingNotes()
+      floatingNotesVisible = false
+      console.log('floating notes hidden')
+    } else {
+      showFloatingNotes(notes, settings?.maxFloatingNotes)
+      floatingNotesVisible = true
+      console.log('floating notes shown')
+    }
+
+    return floatingNotesVisible
   })
 
   ipcMain.handle('manager:magnet', () => {
@@ -64,26 +82,17 @@ ipcMain.handle('settings:save', (_, settings) => {
     createQuickNoteWindow()
   })
 
-  
+  ipcMain.handle('note:open-preview', (_, noteId) => {
+    createFloatingNotePreviewWindow(noteId)
+  })
+
   // main app
   ipcMain.handle('notes:load', () => {
-    
-    // electron store clear ~/.config/ElectronFloatingNote/config.json or below
-    // saveNotes([])
-    // return []
-    
-    const notes = getNotes()
-    console.log('loaded notes:', notes)
-    return notes
+    return getNotes()
   })
 
   ipcMain.handle('notes:save', (_, notes) => {
-    console.log('notes received in main process:', notes)
-
     saveNotes(notes)
-
-    console.log('notes saved')
-
     return true
   })
 

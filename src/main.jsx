@@ -4,23 +4,22 @@ import './index.css'
 import App from './App.jsx'
 import FloatingManagerWidget from './components/FloatingManagerWidget.jsx'
 import QuickNotePage from './components/QuickNotePage'
-
+import FloatingNoteWidget from './components/FloatingNoteWidget.jsx'
+import FloatingNotePreview from './components/FloatingNotePreview.jsx'
 
 const hash = window.location.hash
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    {hash === '#/floating-manager' ? 
-    (
+    {hash === '#/floating-manager' ? (
       <FloatingManagerWidget />
-    ) : 
-    hash.startsWith('#/floating-note/')? (
+    ) : hash.startsWith('#/floating-note-preview/') ? (
+      <FloatingNotePreview />
+    ) : hash.startsWith('#/floating-note/') ? (
       <FloatingNoteWidget />
-    ) :
-    hash === '#/quick-note' ? (
+    ) : hash === '#/quick-note' ? (
       <QuickNotePage />
-    ) :
-    (
+    ) : (
       <App />
     )}
   </StrictMode>,
