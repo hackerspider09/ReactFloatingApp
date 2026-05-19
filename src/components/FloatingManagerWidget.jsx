@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { FiPlus, FiEye, FiMove, FiX } from 'react-icons/fi'
-import { HiSparkles } from 'react-icons/hi2'
+import { BsGear } from "react-icons/bs";
 
 export default function FloatingManagerWidget() {
   const [expanded, setExpanded] = useState(false)
@@ -100,7 +100,7 @@ export default function FloatingManagerWidget() {
             transition: 'width 0.2s ease, height 0.2s ease, min-width 0.2s ease, border-radius 0.2s ease',
           }}
         >
-          <HiSparkles size={expanded ? 13 : 16} />
+          <BsGear size={expanded ? 13 : 16} />
         </div>
 
         {expanded && (

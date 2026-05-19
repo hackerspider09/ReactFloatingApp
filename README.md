@@ -4,14 +4,14 @@ A lightweight, cross-platform desktop application for floating sticky notes. Not
 
 ## Features
 
-- **Floating Note Widgets** — Small, always-on-top note widgets on your desktop
-- **Quick Note Creation** — Create notes from the floating widget without opening the main app
-- **Note Preview** — Click any floating note to see a full preview with edit/delete options
-- **Multiple Preview Windows** — Open several note previews simultaneously
-- **Real-time Sync** — All windows stay in sync (dashboard, widgets, previews)
-- **Launch on Startup** — Optionally start with your OS
-- **Delete Confirmation** — Optional confirmation prompt before deleting
-- **No Admin Permissions** — Installs to user directory, no elevated privileges needed
+- **Floating Note Widgets** - Small, always-on-top note widgets on your desktop
+- **Quick Note Creation** - Create notes from the floating widget without opening the main app
+- **Note Preview** - Click any floating note to see a full preview with edit/delete options
+- **Multiple Preview Windows** - Open several note previews simultaneously
+- **Real-time Sync** - All windows stay in sync (dashboard, widgets, previews)
+- **Launch on Startup** - Optionally start with your OS
+- **Delete Confirmation** - Optional confirmation prompt before deleting
+- **No Admin Permissions** - Installs to user directory, no elevated privileges needed
 
 ## Development Setup
 
@@ -45,8 +45,8 @@ npm run dist:linux
 ```
 
 **Output** (in `release/` directory):
-- `FloatNote-1.0.0.AppImage` — Portable, no installation required
-- `floatnote_1.0.0_amd64.deb` — Debian/Ubuntu package
+- `FloatNote-1.0.0.AppImage` - Portable, no installation required
+- `floatnote_1.0.0_amd64.deb` - Debian/Ubuntu package
 
 ### Build for Windows
 
@@ -55,7 +55,7 @@ npm run dist:win
 ```
 
 **Output** (in `release/` directory):
-- `FloatNote Setup 1.0.0.exe` — NSIS installer (user-level, no admin needed)
+- `FloatNote Setup 1.0.0.exe` - NSIS installer (user-level, no admin needed)
 
 ### Build for All Platforms
 
@@ -71,7 +71,7 @@ npm run dist:all
 
 ### Linux
 
-#### AppImage (Recommended — No Installation)
+#### AppImage (Recommended - No Installation)
 
 1. Download the `.AppImage` file from the releases.
 2. Make it executable:
@@ -98,7 +98,7 @@ npm run dist:all
 ### Windows
 
 1. Download the `FloatNote Setup 1.0.0.exe` installer.
-2. Run the installer — it does **not** require administrator privileges.
+2. Run the installer - it does **not** require administrator privileges.
 3. Choose your installation directory (defaults to user AppData).
 4. Launch from the Start Menu or Desktop shortcut.
 
@@ -154,7 +154,7 @@ The app uses `electron-store` to persist notes and settings as JSON files. No ex
 | **Windows** | `%APPDATA%\floatnote\` |
 
 Inside this directory you'll find:
-- `floatnote.json` — All your notes and settings
+- `floatnote.json` - All your notes and settings
 
 > **Tip**: You can back up or transfer your notes by copying this file.
 
@@ -162,9 +162,9 @@ Inside this directory you'll find:
 
 ## Tech Stack
 
-- **Electron** — Cross-platform desktop framework
-- **React** — UI framework
-- **Vite** — Build tool
-- **Tailwind CSS v4** — Styling
-- **electron-store** — Persistent settings and notes storage
-- **electron-builder** — Packaging and distribution
+- **Electron** - Cross-platform desktop framework
+- **React** - UI framework
+- **Vite** - Build tool
+- **Tailwind CSS v4** - Styling
+- **electron-store** - Persistent settings and notes storage
+- **electron-builder** - Packaging and distribution

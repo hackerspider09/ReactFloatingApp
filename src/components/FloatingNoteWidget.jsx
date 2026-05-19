@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
+import { PiPaperclipLight } from "react-icons/pi";
+
 
 export default function FloatingNoteWidget() {
   const [note, setNote] = useState(null)
@@ -100,7 +102,8 @@ export default function FloatingNoteWidget() {
             pointerEvents: 'none',
           }}
         >
-          {initial}
+          {/* {initial} */}
+          <PiPaperclipLight  size={18} color='black'  />
         </span>
       </div>
     </div>
