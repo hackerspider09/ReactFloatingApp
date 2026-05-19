@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
-import { FiPaperclip } from 'react-icons/fi'
+import { useEffect, useState, useRef, useCallback } from 'react'
 
 export default function FloatingNoteWidget() {
   const [note, setNote] = useState(null)
+  const dragRef = useRef(null)
 
   useEffect(() => {
     async function load() {
@@ -13,49 +13,95 @@ export default function FloatingNoteWidget() {
     }
 
     load()
-  }, [])
 
-  useEffect(() => {
-    async function load() {
+    const cleanup = window.electronAPI.onNotesUpdated((updatedNotes) => {
       const hashParts = window.location.hash.split('/')
       const id = Number(hashParts[hashParts.length - 1])
-      const notes = await window.electronAPI.loadNotes()
-      setNote(notes.find((n) => n.id === id) || null)
+      const updated = updatedNotes.find((n) => n.id === id)
+      if (updated) setNote(updated)
+    })
+
+    return cleanup
+  }, [])
+
+  const handleMouseDown = useCallback(async (e) => {
+    e.preventDefault()
+
+    // Get window position via IPC (correct coordinate system)
+    const startPos = await window.electronAPI.startWindowDrag()
+    if (!startPos) return
+
+    const startMouseX = e.screenX
+    const startMouseY = e.screenY
+    let moved = false
+
+    const onMouseMove = (ev) => {
+      const dx = ev.screenX - startMouseX
+      const dy = ev.screenY - startMouseY
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+        moved = true
+        window.electronAPI.moveWindowDrag(dx, dy)
+      }
     }
 
-    load()
-  }, [])
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+      if (!moved && note) {
+        window.electronAPI.openFloatingNotePreview(note.id)
+      }
+    }
+
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+  }, [note])
 
   if (!note) return null
 
+  const initial = (note.title || '?')[0].toUpperCase()
+
   return (
-    <div className="w-full h-full flex items-center justify-center pointer-events-none" style={{ background: 'transparent' }}>
-      <div className="pointer-events-auto">
-        <div
-          className="relative rounded-xl shadow-2xl overflow-hidden"
+    <div
+      style={{
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'transparent',
+        pointerEvents: 'none',
+      }}
+    >
+      <div
+        className="widget-enter"
+        onMouseDown={handleMouseDown}
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: 10,
+          background: note.color,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'grab',
+          userSelect: 'none',
+          pointerEvents: 'auto',
+        }}
+        title={note.title}
+      >
+        <span
           style={{
-            width: 70,
-            height: 70,
-            background: note.color,
-            WebkitAppRegion: 'drag',
+            fontSize: 16,
+            fontWeight: 800,
+            color: 'rgba(0,0,0,0.4)',
+            fontFamily: 'Inter, system-ui, sans-serif',
+            userSelect: 'none',
+            lineHeight: 1,
+            pointerEvents: 'none',
           }}
         >
-          <button
-            onClick={() => window.electronAPI.openFloatingNotePreview(note.id)}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-black bg-black/10 hover:bg-black/20 transition-colors shadow-sm"
-            style={{ 
-              WebkitAppRegion: 'no-drag', 
-              background: 'transparent', 
-              border: 'none',
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            <FiPaperclip size={24} />
-          </button>
-        </div>
+          {initial}
+        </span>
       </div>
     </div>
   )

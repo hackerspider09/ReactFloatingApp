@@ -66,10 +66,11 @@ export default function App() {
 
   useEffect(() => {
     if (window.electronAPI.onNotesUpdated) {
-      window.electronAPI.onNotesUpdated((updatedNotes) => {
+      const cleanup = window.electronAPI.onNotesUpdated((updatedNotes) => {
         console.log('Received notes update from IPC', updatedNotes)
         setNotes(updatedNotes)
       })
+      return cleanup
     }
   }, [])
 

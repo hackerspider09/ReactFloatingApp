@@ -2,8 +2,8 @@ export default function SettingsPage({ settings, onChange }) {
   return (
     <div className="flex-1 flex flex-col p-8 overflow-auto custom-scrollbar">
       <div className="mb-10">
-        <h2 className="text-3xl font-bold text-white">Settings</h2>
-        <p className="text-white/50 mt-2">
+        <h2 className="text-3xl font-bold text-white tracking-tight">Settings</h2>
+        <p className="text-white/40 mt-1 text-sm">
           Configure FloatNote behavior and performance
         </p>
       </div>

@@ -9,3 +9,7 @@
 [] bug: when widgets are present and try to open application it closed
 [] bug: icon not visible in os app manager
 [] chore: autostart not working
+
+
+22/04/2025
+[] feature: colour wheel

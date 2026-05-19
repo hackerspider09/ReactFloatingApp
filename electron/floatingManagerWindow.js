@@ -6,7 +6,7 @@ const { BrowserWindow, screen } = electron
 let floatingManagerWindow = null
 
 export function createFloatingManagerWindow() {
-  if (floatingManagerWindow) {
+  if (floatingManagerWindow && !floatingManagerWindow.isDestroyed()) {
     floatingManagerWindow.focus()
     return floatingManagerWindow
   }
@@ -15,10 +15,10 @@ export function createFloatingManagerWindow() {
   const { width, height } = display.workAreaSize
 
   floatingManagerWindow = new BrowserWindow({
-    width: 320,
-    height: 110,
-    x: width - 300,
-    y: height - 130,
+    width: 260,
+    height: 44,
+    x: width - 260,
+    y: height - 48,
     frame: false,
     transparent: true,
     resizable: false,
@@ -28,7 +28,10 @@ export function createFloatingManagerWindow() {
     focusable: true,
     show: false,
     movable: true,
-    hasShadow: true,
+    minimizable: false,
+    maximizable: false,
+    fullscreenable: false,
+    hasShadow: false,
     webPreferences: {
       preload: getPreloadPath(),
       contextIsolation: true,
@@ -36,19 +39,31 @@ export function createFloatingManagerWindow() {
     },
   })
 
-floatingManagerWindow.loadURL(getURL('floating-manager'))
+  floatingManagerWindow.loadURL(getURL('floating-manager'))
 
-floatingManagerWindow.once('ready-to-show', () => {
-  floatingManagerWindow.setSkipTaskbar(true)
-  floatingManagerWindow.show()
-})
+  floatingManagerWindow.once('ready-to-show', () => {
+    floatingManagerWindow.setSkipTaskbar(true)
+    floatingManagerWindow.show()
+  })
+
+  floatingManagerWindow.on('closed', () => {
+    floatingManagerWindow = null
+  })
 
   return floatingManagerWindow
 }
 
 export function closeFloatingManagerWindow() {
-  if (floatingManagerWindow) {
+  if (floatingManagerWindow && !floatingManagerWindow.isDestroyed()) {
     floatingManagerWindow.close()
     floatingManagerWindow = null
+  }
+}
+
+export function resetManagerPosition() {
+  if (floatingManagerWindow && !floatingManagerWindow.isDestroyed()) {
+    const display = screen.getPrimaryDisplay()
+    const { width, height } = display.workAreaSize
+    floatingManagerWindow.setPosition(width - 260, height - 48)
   }
 }

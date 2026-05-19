@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 html,
 body,
 #root {
@@ -10,12 +9,13 @@ body,
 
 body {
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+/* ── Custom Scrollbar ── */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -24,12 +24,49 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 10px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ── Floating Widget Animations ── */
+@keyframes widget-pop-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* widget-dot has no hover shadow — keep flat */
+
+.widget-enter {
+  animation: widget-pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ── Manager Pill ── */
+.manager-pill {
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 0.2s ease;
+}
+
+/* ── Note Card Hover ── */
+.note-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.note-card:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.3);
 }

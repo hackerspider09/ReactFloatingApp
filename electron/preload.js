@@ -20,8 +20,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
   createQuickNoteWindow: () => ipcRenderer.invoke('note:create-window'),
   openFloatingNotePreview: (noteId) => ipcRenderer.invoke('note:open-preview', noteId),
 
-  // sync ipc
-  onNotesUpdated: (callback) => ipcRenderer.on('notes-updated', (_, notes) => callback(notes)),
+  // sync ipc — returns cleanup function to avoid listener leaks
+  onNotesUpdated: (callback) => {
+    const handler = (_, notes) => callback(notes)
+    ipcRenderer.on('notes-updated', handler)
+    return () => ipcRenderer.removeListener('notes-updated', handler)
+  },
+
+  // window drag ipc — uses Electron's coordinate system to avoid DPI issues
+  startWindowDrag: () => ipcRenderer.invoke('window:start-drag'),
+  moveWindowDrag: (dx, dy) => ipcRenderer.send('window:move-drag', dx, dy),
 
   // startup ipc
   setAutoLaunch: (enabled) => ipcRenderer.invoke('settings:set-autolaunch', enabled),

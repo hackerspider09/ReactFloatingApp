@@ -1,111 +1,165 @@
-import { useEffect, useState } from 'react'
-import { FiSettings, FiPlus, FiEye, FiMove, FiX } from 'react-icons/fi'
+import { useEffect, useState, useRef, useCallback } from 'react'
+import { FiPlus, FiEye, FiMove, FiX } from 'react-icons/fi'
+import { HiSparkles } from 'react-icons/hi2'
 
 export default function FloatingManagerWidget() {
   const [expanded, setExpanded] = useState(false)
+  const collapseTimer = useRef(null)
 
   useEffect(() => {
-    function keepInsideScreen() {
-      const padding = 12
+    if (expanded) {
+      collapseTimer.current = setTimeout(() => setExpanded(false), 6000)
+      return () => clearTimeout(collapseTimer.current)
+    }
+  }, [expanded])
 
-      const x = window.screenX
-      const y = window.screenY
-      const width = window.outerWidth
-      const screenWidth = window.screen.availWidth
+  function resetCollapseTimer() {
+    if (collapseTimer.current) clearTimeout(collapseTimer.current)
+    collapseTimer.current = setTimeout(() => setExpanded(false), 6000)
+  }
 
-      // when expanded and too close to right side
-      if (expanded && x + width > screenWidth - padding) {
-        window.moveTo(screenWidth - width - padding, y)
-      }
+  const handleMouseDown = useCallback(async (e) => {
+    // If expanded and clicking a button, let the button handle it
+    if (expanded && e.target.closest('button')) return
 
-      // if too far left
-      if (x < padding) {
-        window.moveTo(padding, y)
+    e.preventDefault()
+
+    // Get window position via IPC (correct coordinate system)
+    const startPos = await window.electronAPI.startWindowDrag()
+    if (!startPos) return
+
+    const startMouseX = e.screenX
+    const startMouseY = e.screenY
+    let moved = false
+
+    const onMouseMove = (ev) => {
+      const dx = ev.screenX - startMouseX
+      const dy = ev.screenY - startMouseY
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+        moved = true
+        window.electronAPI.moveWindowDrag(dx, dy)
       }
     }
 
-    keepInsideScreen()
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+      if (!moved) {
+        setExpanded((prev) => !prev)
+      }
+    }
 
-    const timer = setTimeout(keepInsideScreen, 50)
-    return () => clearTimeout(timer)
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
   }, [expanded])
 
   return (
-    <div className="w-screen h-screen flex items-end justify-end p-2 pointer-events-none">
-      <div
-      className="pointer-events-auto"
+    <div
+      style={{
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        background: 'transparent',
+        pointerEvents: 'none',
+      }}
     >
       <div
-        className={`relative rounded-3xl bg-[#181F2E]/95 border border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-300 ${
-          expanded ? 'w-[300px] h-[90px]' : 'w-[90px] h-[90px]'
-        }`}
+        className="widget-enter"
+        onMouseDown={handleMouseDown}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: expanded ? 4 : 0,
+          width: expanded ? 248 : 40,
+          height: 40,
+          borderRadius: 10,
+          background: 'rgba(20, 26, 40, 0.95)',
+          padding: expanded ? '0 6px' : 0,
+          overflow: 'hidden',
+          cursor: 'grab',
+          userSelect: 'none',
+          pointerEvents: 'auto',
+          transition: 'width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        }}
       >
-        {/* Drag layer */}
+        {/* Main icon — always visible */}
         <div
-          className="absolute inset-0"
-          style={{ WebkitAppRegion: 'drag' }}
-        />
+          style={{
+            width: expanded ? 28 : 40,
+            height: expanded ? 28 : 40,
+            minWidth: expanded ? 28 : 40,
+            borderRadius: expanded ? 8 : 10,
+            background: 'linear-gradient(135deg, #22d3ee, #06b6d4)',
+            color: '#000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            transition: 'width 0.2s ease, height 0.2s ease, min-width 0.2s ease, border-radius 0.2s ease',
+          }}
+        >
+          <HiSparkles size={expanded ? 13 : 16} />
+        </div>
 
-        {expanded ? (
-          <div className="relative z-10 h-full flex items-center gap-2 px-3">
+        {expanded && (
+          <>
             <button
-              onClick={() => setExpanded(false)}
-              className="w-10 h-10 rounded-2xl bg-cyan-400 text-black flex items-center justify-center flex-shrink-0 hover:scale-105 transition"
-              style={{ WebkitAppRegion: 'no-drag' }}
-              title="Collapse"
-            >
-              <FiSettings size={18} />
-            </button>
-
-            <button
-              onClick={() => window.electronAPI.createQuickNoteWindow()}
-              className="w-10 h-10 rounded-2xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition"
-              style={{ WebkitAppRegion: 'no-drag' }}
+              onClick={() => { resetCollapseTimer(); window.electronAPI.createQuickNoteWindow() }}
+              style={{
+                width: 28, height: 28, minWidth: 28, borderRadius: 8,
+                background: 'rgba(255,255,255,0.08)', color: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: 'none', cursor: 'pointer', outline: 'none',
+              }}
               title="Create Note"
             >
-              <FiPlus size={18} />
+              <FiPlus size={13} />
             </button>
 
             <button
-              onClick={() => window.electronAPI.toggleNotesVisibility()}
-              className="w-10 h-10 rounded-2xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition"
-              style={{ WebkitAppRegion: 'no-drag' }}
+              onClick={() => { resetCollapseTimer(); window.electronAPI.toggleNotesVisibility() }}
+              style={{
+                width: 28, height: 28, minWidth: 28, borderRadius: 8,
+                background: 'rgba(255,255,255,0.08)', color: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: 'none', cursor: 'pointer', outline: 'none',
+              }}
               title="Show / Hide Notes"
             >
-              <FiEye size={18} />
+              <FiEye size={13} />
             </button>
 
             <button
-              onClick={() => window.electronAPI.magnetNotes()}
-              className="w-10 h-10 rounded-2xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition"
-              style={{ WebkitAppRegion: 'no-drag' }}
-              title="Magnet Notes"
+              onClick={() => { resetCollapseTimer(); window.electronAPI.magnetNotes() }}
+              style={{
+                width: 28, height: 28, minWidth: 28, borderRadius: 8,
+                background: 'rgba(255,255,255,0.08)', color: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: 'none', cursor: 'pointer', outline: 'none',
+              }}
+              title="Rearrange Notes"
             >
-              <FiMove size={18} />
+              <FiMove size={13} />
             </button>
+
+            <div style={{ width: 1, height: 18, background: 'rgba(255,255,255,0.08)', flexShrink: 0 }} />
 
             <button
               onClick={() => window.electronAPI.closeFloatingManager()}
-              className="w-10 h-10 rounded-2xl bg-red-500/20 text-red-300 flex items-center justify-center hover:bg-red-500/30 transition"
-              style={{ WebkitAppRegion: 'no-drag' }}
+              style={{
+                width: 28, height: 28, minWidth: 28, borderRadius: 8,
+                background: 'rgba(239,68,68,0.12)', color: '#fca5a5',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: 'none', cursor: 'pointer', outline: 'none',
+              }}
               title="Close Widget"
             >
-              <FiX size={18} />
+              <FiX size={13} />
             </button>
-          </div>
-        ) : (
-          <div className="relative z-10 w-full h-full flex items-center justify-center">
-            <button
-              onClick={() => setExpanded(true)}
-              className="w-10 h-10 rounded-2xl bg-cyan-400 text-black flex items-center justify-center hover:scale-105 transition"
-              style={{ WebkitAppRegion: 'no-drag' }}
-              title="Open Controls"
-            >
-              <FiSettings size={18} />
-            </button>
-          </div>
+          </>
         )}
-      </div>
       </div>
     </div>
   )

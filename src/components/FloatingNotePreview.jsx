@@ -23,18 +23,20 @@ export default function FloatingNotePreview() {
   }, [])
 
   useEffect(() => {
-    if (window.electronAPI.onNotesUpdated) {
-      window.electronAPI.onNotesUpdated((updatedNotes) => {
-        if (!note) return
-        const updatedSelf = updatedNotes.find((n) => n.id === note.id)
-        if (updatedSelf) {
-          setNote(updatedSelf)
-        } else {
-          // If note is gone, close window
-          window.close()
-        }
-      })
-    }
+    if (!window.electronAPI.onNotesUpdated) return
+
+    const cleanup = window.electronAPI.onNotesUpdated((updatedNotes) => {
+      if (!note) return
+      const updatedSelf = updatedNotes.find((n) => n.id === note.id)
+      if (updatedSelf) {
+        setNote(updatedSelf)
+      } else {
+        // If note is gone, close window
+        window.close()
+      }
+    })
+
+    return cleanup
   }, [note])
 
   async function handleSave(updatedData) {

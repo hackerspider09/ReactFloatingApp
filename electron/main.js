@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url'
 import { getNotes, saveNotes, getSettings, saveSettings } from '../src/data/store.js'
 import { getURL, getPreloadPath } from './utils.js'
 
-import { createFloatingManagerWindow, closeFloatingManagerWindow } from './floatingManagerWindow.js'
+import { createFloatingManagerWindow, closeFloatingManagerWindow, resetManagerPosition } from './floatingManagerWindow.js'
 import { createQuickNoteWindow } from './quickNoteWindow.js'
 import { showFloatingNotes, hideFloatingNotes } from './floatingNotesWindow.js'
 import { createFloatingNotePreviewWindow } from './floatingNotePreviewWindow.js'
@@ -98,6 +98,7 @@ app.whenReady().then(() => {
     import('./floatingNotesWindow.js').then(module => {
       module.rearrangeNotes()
     })
+    resetManagerPosition()
   })
 
   ipcMain.handle('manager:close-widget', () => {
@@ -117,6 +118,27 @@ app.whenReady().then(() => {
   })
 
   createFloatingManagerWindow()
+
+  // Window drag IPC — uses Electron's coordinate system (avoids DPI scaling bugs)
+  const dragStartPositions = new Map()
+
+  ipcMain.handle('window:start-drag', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
+    if (win && !win.isDestroyed()) {
+      const [x, y] = win.getPosition()
+      dragStartPositions.set(win.id, { x, y })
+      return { x, y }
+    }
+    return null
+  })
+
+  ipcMain.on('window:move-drag', (event, dx, dy) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
+    if (win && !win.isDestroyed() && dragStartPositions.has(win.id)) {
+      const start = dragStartPositions.get(win.id)
+      win.setPosition(Math.round(start.x + dx), Math.round(start.y + dy))
+    }
+  })
 
 
   // create note window

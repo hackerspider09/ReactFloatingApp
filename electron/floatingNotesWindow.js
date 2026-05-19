@@ -18,16 +18,16 @@ export function showFloatingNotes(notes, maxCount) {
   // 1. Close windows for notes that should no longer be visible
   for (const [id, win] of floatingWindows.entries()) {
     if (!visibleNoteIds.has(id)) {
-      win.close()
+      if (!win.isDestroyed()) win.close()
       floatingWindows.delete(id)
     }
   }
 
   // 2. Create or update windows for visible notes
   visibleNotes.forEach((note, index) => {
-    const xPos = width - 80
-    const yPos = 40 + index * 85
-    
+    const xPos = width - 44
+    const yPos = 8 + index * 50
+
     // Update position in note object for persistence later
     note.x = xPos
     note.y = yPos
@@ -35,6 +35,10 @@ export function showFloatingNotes(notes, maxCount) {
     if (floatingWindows.has(note.id)) {
       // If window already exists, just update position (if changed)
       const win = floatingWindows.get(note.id)
+      if (win.isDestroyed()) {
+        floatingWindows.delete(note.id)
+        return
+      }
       const currentPos = win.getPosition()
       if (currentPos[0] !== xPos || currentPos[1] !== yPos) {
         win.setPosition(xPos, yPos)
@@ -44,20 +48,24 @@ export function showFloatingNotes(notes, maxCount) {
       console.log('creating floating note window for note id:', note.id, 'position:', xPos, yPos)
 
       const win = new BrowserWindow({
-        width: 80,
-        height: 70,
+        width: 44,
+        height: 44,
         x: xPos,
         y: yPos,
         frame: false,
         transparent: true,
         backgroundColor: '#00000000',
-        resizable: true,
+        resizable: false,
         alwaysOnTop: true,
         skipTaskbar: true,
         type: 'toolbar',
         movable: true,
         focusable: true,
-        show: true,
+        show: false,
+        minimizable: false,
+        maximizable: false,
+        fullscreenable: false,
+        hasShadow: false,
         webPreferences: {
           preload: getPreloadPath(),
           contextIsolation: true,
@@ -87,31 +95,37 @@ export function showFloatingNotes(notes, maxCount) {
 }
 
 export function hideFloatingNotes() {
-  floatingWindows.forEach((win) => win.close())
+  floatingWindows.forEach((win) => {
+    if (!win.isDestroyed()) win.close()
+  })
   floatingWindows.clear()
 }
 
 export function rearrangeNotes() {
   const display = screen.getPrimaryDisplay()
   const { width } = display.workAreaSize
-  
+
   const allNotes = getNotes()
-  
+
   let index = 0
   floatingWindows.forEach((win, id) => {
-    const xPos = width - 90
-    const yPos = 20 + index * 85
+    if (win.isDestroyed()) {
+      floatingWindows.delete(id)
+      return
+    }
+    const xPos = width - 44
+    const yPos = 8 + index * 50
     win.setPosition(xPos, yPos)
-    
+
     // Update store for persistence
     const note = allNotes.find(n => n.id === id)
     if (note) {
       note.x = xPos
       note.y = yPos
     }
-    
+
     index++
   })
-  
+
   saveNotes(allNotes)
 }
