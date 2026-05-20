@@ -37,8 +37,7 @@
         "AppImage",
         "deb"
       ],
-      "category": "Utility",
-      "icon": "build/icon.png"
+      "category": "Utility"
     },
     "win": {
       "target": [
@@ -48,15 +47,12 @@
             "x64"
           ]
         }
-      ],
-      "icon": "build/icon.png"
+      ]
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "perMachine": false,
-      "installerIcon": "build/icon.png",
-      "uninstallerIcon": "build/icon.png"
+      "perMachine": false
     }
   },
   "dependencies": {

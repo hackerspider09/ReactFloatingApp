@@ -27,7 +27,7 @@ jobs:
         run: node --version
 
       - name: install dependency
-        run: npm ci
+        run: npm i
       
       - name: build app
         run: ${{matrix.envCmd.buildCmd}}
