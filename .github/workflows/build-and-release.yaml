@@ -5,8 +5,41 @@ on:
 
 jobs:
   build_and_release:
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.envCmd.os}}
+
+    strategy:
+      matrix:
+        envCmd:
+          - {os: "windows-latest", buildCmd: "npm run dist:win"}
+          # - {os: "ubuntu-latest", buildCmd: "npm run dist:linux"}
+
 
     steps:
+      # - name: Checkout repository
+      #   uses: actions/checkout@v6
+
+      - name: setup js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
       - name: "Debug: JS version"
         run: node --version
+
+      - name: install dependency
+        run: npm ci
+      
+      - name: build app
+        run: ${{matrix.envCmd.buildCmd}}
+
+      - name: debug
+        run: |
+          ls
+          ls realse
+          ls realse/win-unpacked
+
+      # - name: realse app
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     files: |
+            
