@@ -2,6 +2,10 @@ name: "Build and release application"
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        type: string
+        default: "v1"
 
 jobs:
   build_and_release:
@@ -41,6 +45,7 @@ jobs:
       - name: realse app
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.event.inputs.tag }}
           files: release/win-unpacked/FloatNote.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
