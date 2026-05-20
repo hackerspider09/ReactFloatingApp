@@ -38,8 +38,10 @@ jobs:
           ls release
           ls release/win-unpacked
 
-      # - name: realse app
-      #   uses: softprops/action-gh-release@v2
-      #   with:
-      #     files: |
+      - name: realse app
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/win-unpacked/FloatNote.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
             
