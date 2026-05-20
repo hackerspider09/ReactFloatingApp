@@ -1,0 +1,12 @@
+name: "Build and release application"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Debug: JS version"
+        run: node --version
