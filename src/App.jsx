@@ -17,6 +17,7 @@ export default function App() {
     maxFloatingNotes: 5,
     confirmDelete: false,
     launchOnStartup: true,
+    managerLayout: 'bar',
   })
 
   const filteredNotes = notes.filter((note) =>

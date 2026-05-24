@@ -8,6 +8,7 @@ const store = new Store({
     settings: {
       maxFloatingNotes: 5,
       launchOnStartup: true,
+      managerLayout: 'bar',
     },
   },
 })

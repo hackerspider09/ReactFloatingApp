@@ -170,8 +170,8 @@ app.whenReady().then(() => {
     floatingNotesVisible = true
   })
 
-  ipcMain.handle('manager:resize', (_, width) => {
-    resizeManagerWindow(width)
+  ipcMain.handle('manager:resize', (_, width, height) => {
+    resizeManagerWindow(width, height)
   })
 
   createFloatingManagerWindow()

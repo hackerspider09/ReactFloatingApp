@@ -60,13 +60,19 @@ export function closeFloatingManagerWindow() {
   }
 }
 
-export function resizeManagerWindow(newWidth) {
+export function resizeManagerWindow(newWidth, newHeight) {
   if (floatingManagerWindow && !floatingManagerWindow.isDestroyed()) {
-    const [oldX] = floatingManagerWindow.getPosition()
-    const [oldW] = floatingManagerWindow.getSize()
-    // Anchor to the right: shift x so the right edge stays in place
+    const [oldX, oldY] = floatingManagerWindow.getPosition()
+    const [oldW, oldH] = floatingManagerWindow.getSize()
+    // Anchor bottom-right: gear icon stays at same screen position
     const newX = oldX + oldW - newWidth
-    floatingManagerWindow.setBounds({ x: newX, width: newWidth })
+    const newY = oldY + oldH - (newHeight || oldH)
+    floatingManagerWindow.setBounds({
+      x: newX,
+      y: newY,
+      width: newWidth,
+      height: newHeight || oldH,
+    })
   }
 }
 

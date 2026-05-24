@@ -55,6 +55,79 @@ export default function SettingsPage({ settings, onChange }) {
         </div>
 
         <div className="bg-[#181F2E] border border-white/10 rounded-3xl p-6">
+          <h3 className="text-xl font-semibold text-white mb-2">
+            Manager Layout
+          </h3>
+
+          <p className="text-white/50 text-sm mb-6">
+            Choose how the floating manager widget expands its controls.
+          </p>
+
+          <div className="flex gap-4">
+            <label
+              className={`flex-1 cursor-pointer rounded-2xl border-2 p-4 transition-all ${settings.managerLayout === 'bar'
+                  ? 'border-cyan-400 bg-cyan-500/10'
+                  : 'border-white/10 hover:border-white/20'
+                }`}
+            >
+              <input
+                type="radio"
+                name="managerLayout"
+                value="bar"
+                checked={settings.managerLayout === 'bar'}
+                onChange={() =>
+                  onChange({ ...settings, managerLayout: 'bar' })
+                }
+                className="sr-only"
+              />
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex items-center gap-1">
+                  <div className="w-6 h-6 rounded bg-cyan-500/60" />
+                  <div className="w-5 h-5 rounded bg-white/15" />
+                  <div className="w-5 h-5 rounded bg-white/15" />
+                  <div className="w-5 h-5 rounded bg-white/15" />
+                </div>
+                <span className="text-white font-medium text-sm">Bar</span>
+                <span className="text-white/40 text-xs text-center">
+                  Linear toolbar strip
+                </span>
+              </div>
+            </label>
+
+            <label
+              className={`flex-1 cursor-pointer rounded-2xl border-2 p-4 transition-all ${settings.managerLayout === 'circular'
+                  ? 'border-cyan-400 bg-cyan-500/10'
+                  : 'border-white/10 hover:border-white/20'
+                }`}
+            >
+              <input
+                type="radio"
+                name="managerLayout"
+                value="circular"
+                checked={settings.managerLayout === 'circular'}
+                onChange={() =>
+                  onChange({ ...settings, managerLayout: 'circular' })
+                }
+                className="sr-only"
+              />
+              <div className="flex flex-col items-center gap-3">
+                <div className="relative w-12 h-12">
+                  <div className="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-cyan-500/60" />
+                  <div className="absolute top-1 left-1 w-4 h-4 rounded-full bg-white/15" />
+                  <div className="absolute top-0 right-2 w-4 h-4 rounded-full bg-white/15" />
+                  <div className="absolute bottom-1 left-0 w-4 h-4 rounded-full bg-white/15" />
+                  <div className="absolute top-3 left-4 w-4 h-4 rounded-full bg-white/15" />
+                </div>
+                <span className="text-white font-medium text-sm">Circular</span>
+                <span className="text-white/40 text-xs text-center">
+                  Radial arc layout
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div className="bg-[#181F2E] border border-white/10 rounded-3xl p-6">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xl font-semibold text-white mb-2">

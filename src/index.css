@@ -70,3 +70,30 @@ body {
   transform: translateY(-3px) scale(1.01);
   box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.3);
 }
+
+/* ── Circular Manager Animations ── */
+@keyframes circularPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ringFadeIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
