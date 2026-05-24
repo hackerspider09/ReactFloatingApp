@@ -112,7 +112,7 @@ All settings are accessible from the **Settings** page in the main dashboard:
 |---|---|---|
 | Max Floating Notes | Number of floating widgets on desktop | 5 |
 | Delete Confirmation | Show prompt before deleting a note | Off |
-| Launch on Startup | Auto-start with your operating system | Off |
+| Launch on Startup | Auto-start with your operating system | On |
 
 ---
 
@@ -124,13 +124,15 @@ All settings are accessible from the **Settings** page in the main dashboard:
 Simply delete the `.AppImage` file. To also remove app data:
 ```bash
 rm -rf ~/.config/floatnote
+rm -f ~/.config/autostart/floatnote.desktop
 ```
 
 #### Debian/Ubuntu (.deb)
 ```bash
 sudo dpkg -r floatnote
-# Remove app data
+# Remove app data and autostart entry
 rm -rf ~/.config/floatnote
+rm -f ~/.config/autostart/floatnote.desktop
 ```
 
 ### Windows

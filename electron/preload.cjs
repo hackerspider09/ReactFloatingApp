@@ -15,6 +15,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   magnetNotes: () => ipcRenderer.invoke('manager:magnet'),
   closeFloatingManager: () => ipcRenderer.invoke('manager:close-widget'),
   openFloatingManager: () => ipcRenderer.invoke('manager:open-widget'),
+  resizeManagerWindow: (width) => ipcRenderer.invoke('manager:resize', width),
 
   // create window ipc
   createQuickNoteWindow: () => ipcRenderer.invoke('note:create-window'),

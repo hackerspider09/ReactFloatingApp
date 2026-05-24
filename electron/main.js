@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url'
 import { getNotes, saveNotes, getSettings, saveSettings } from '../src/data/store.js'
 import { getURL, getPreloadPath } from './utils.js'
 
-import { createFloatingManagerWindow, closeFloatingManagerWindow, resetManagerPosition } from './floatingManagerWindow.js'
+import { createFloatingManagerWindow, closeFloatingManagerWindow, resetManagerPosition, resizeManagerWindow } from './floatingManagerWindow.js'
 import { createQuickNoteWindow } from './quickNoteWindow.js'
 import { showFloatingNotes, hideFloatingNotes } from './floatingNotesWindow.js'
 import { createFloatingNotePreviewWindow } from './floatingNotePreviewWindow.js'
@@ -13,15 +13,21 @@ const { app, BrowserWindow, ipcMain } = electron
 
 let mainWindow = null
 
+// Check if launched with --hidden (autostart mode: widget only, no main window)
+const isHiddenStart = process.argv.includes('--hidden')
+
 // Prevent multiple instances — focus existing window instead
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
   app.quit()
 } else {
   app.on('second-instance', () => {
-    if (mainWindow) {
+    if (mainWindow && !mainWindow.isDestroyed()) {
       if (mainWindow.isMinimized()) mainWindow.restore()
       mainWindow.focus()
+    } else {
+      // Main window doesn't exist (e.g. widget-only mode), create it
+      createWindow()
     }
   })
 }
@@ -35,6 +41,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    icon: path.join(app.getAppPath(), 'build', 'icon.png'),
     webPreferences: {
       preload: getPreloadPath(),
       contextIsolation: true,
@@ -49,6 +56,47 @@ function createWindow() {
   })
 }
 
+// Autostart helper — manages ~/.config/autostart/floatnote.desktop
+async function setupAutostart(enabled) {
+  if (process.platform === 'linux') {
+    const { default: fs } = await import('fs')
+    const { default: os } = await import('os')
+
+    const autostartDir = path.join(os.homedir(), '.config', 'autostart')
+    const autostartFile = path.join(autostartDir, 'floatnote.desktop')
+    const systemDesktopFile = '/usr/share/applications/floatnote.desktop'
+
+    if (enabled) {
+      // Ensure autostart directory exists
+      if (!fs.existsSync(autostartDir)) {
+        fs.mkdirSync(autostartDir, { recursive: true })
+      }
+
+      if (fs.existsSync(systemDesktopFile)) {
+        // Read system .desktop file and add --hidden flag
+        let content = fs.readFileSync(systemDesktopFile, 'utf-8')
+        // Add --hidden to the Exec line so autostart only shows widget
+        content = content.replace(/^(Exec=.+?)(\s*%U)?$/m, '$1 --hidden$2')
+        fs.writeFileSync(autostartFile, content)
+      } else {
+        // Fallback: create a .desktop file with --hidden
+        const desktopContent = `[Desktop Entry]\nName=FloatNote\nExec=${process.execPath} --hidden %U\nTerminal=false\nType=Application\nIcon=floatnote\nStartupWMClass=FloatNote\nComment=A floating sticky notes desktop application\nCategories=Utility;\n`
+        fs.writeFileSync(autostartFile, desktopContent)
+      }
+      console.log('Autostart enabled:', autostartFile)
+    } else {
+      // Remove the autostart entry
+      if (fs.existsSync(autostartFile)) {
+        fs.unlinkSync(autostartFile)
+        console.log('Autostart disabled:', autostartFile)
+      }
+    }
+  } else {
+    // Windows: Electron's built-in API works fine
+    app.setLoginItemSettings({ openAtLogin: enabled })
+  }
+}
+
 app.whenReady().then(() => {
   ipcMain.handle('settings:load', () => {
     return getSettings()
@@ -59,8 +107,8 @@ app.whenReady().then(() => {
     return true
   })
 
-  ipcMain.handle('settings:set-autolaunch', (_, enabled) => {
-    app.setLoginItemSettings({ openAtLogin: enabled })
+  ipcMain.handle('settings:set-autolaunch', async (_, enabled) => {
+    await setupAutostart(enabled)
     return true
   })
 
@@ -89,9 +137,14 @@ app.whenReady().then(() => {
     return floatingNotesVisible
   })
 
+  // Auto-setup autostart on first run
+  const initialSettings = getSettings()
+  if (initialSettings?.launchOnStartup) {
+    setupAutostart(true).catch(err => console.error('Auto-setup autostart failed:', err))
+  }
+
   // Initial show on startup
   const initialNotes = getNotes()
-  const initialSettings = getSettings()
   showFloatingNotes(initialNotes, initialSettings?.maxFloatingNotes)
 
   ipcMain.handle('manager:magnet', () => {
@@ -115,6 +168,10 @@ app.whenReady().then(() => {
     const settings = getSettings()
     showFloatingNotes(notes, settings?.maxFloatingNotes)
     floatingNotesVisible = true
+  })
+
+  ipcMain.handle('manager:resize', (_, width) => {
+    resizeManagerWindow(width)
   })
 
   createFloatingManagerWindow()
@@ -173,5 +230,8 @@ app.whenReady().then(() => {
     return true
   })
 
-  createWindow()
+  // Only create main window if NOT in hidden/autostart mode
+  if (!isHiddenStart) {
+    createWindow()
+  }
 })

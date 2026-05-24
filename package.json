@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "concurrently \"npm run vite\" \"npm run electron\"",
     "vite": "vite",
-    "electron": "wait-on tcp:5173 && cross-env NODE_ENV=development electron .",
+    "electron": "wait-on tcp:5173 && cross-env NODE_ENV=development electron . --no-sandbox",
     "build": "vite build",
     "dist:linux": "vite build && electron-builder --linux",
     "dist:win": "vite build && electron-builder --win",
@@ -29,11 +29,13 @@
     "files": [
       "dist/**/*",
       "electron/**/*",
+      "build/**/*",
       "src/data/**/*",
       "node_modules/**/*",
       "package.json"
     ],
     "linux": {
+      "icon": "build/icon.png",
       "target": [
         "AppImage",
         "deb"
@@ -41,6 +43,7 @@
       "category": "Utility"
     },
     "win": {
+      "icon": "build/icon.ico",
       "target": [
         {
           "target": "nsis",

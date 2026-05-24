@@ -25,5 +25,5 @@ export function getURL(hash) {
  * @returns {string}
  */
 export function getPreloadPath() {
-  return path.join(app.getAppPath(), 'electron', 'preload.js')
+  return path.join(app.getAppPath(), 'electron', 'preload.cjs')
 }

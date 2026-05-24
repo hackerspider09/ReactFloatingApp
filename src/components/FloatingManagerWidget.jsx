@@ -1,12 +1,22 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { FiPlus, FiEye, FiMove, FiX } from 'react-icons/fi'
+import { FiPlus, FiEye, FiEyeOff, FiMove, FiX } from 'react-icons/fi'
 import { BsGear } from "react-icons/bs";
 
 export default function FloatingManagerWidget() {
   const [expanded, setExpanded] = useState(false)
+  const [notesVisible, setNotesVisible] = useState(true)
   const collapseTimer = useRef(null)
 
+  // Collapsed = gear icon only, Expanded = all buttons + divider + gaps
+  // gear(40) + 4 btns(40ea) + divider(1) + 5 gaps(2ea) = 211, + 4px padding
+  const COLLAPSED_W = 44
+  const EXPANDED_W = 215
+
   useEffect(() => {
+    // Resize the BrowserWindow to match widget state
+    const w = expanded ? EXPANDED_W : COLLAPSED_W
+    window.electronAPI.resizeManagerWindow(w)
+
     if (expanded) {
       collapseTimer.current = setTimeout(() => setExpanded(false), 6000)
       return () => clearTimeout(collapseTimer.current)
@@ -71,12 +81,12 @@ export default function FloatingManagerWidget() {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: expanded ? 4 : 0,
-          width: expanded ? 248 : 40,
+          gap: expanded ? 2 : 0,
+          width: expanded ? 'fit-content' : 40,
           height: 40,
           borderRadius: 10,
           background: 'rgba(20, 26, 40, 0.95)',
-          padding: expanded ? '0 6px' : 0,
+          padding: 0,
           overflow: 'hidden',
           cursor: 'grab',
           userSelect: 'none',
@@ -87,20 +97,19 @@ export default function FloatingManagerWidget() {
         {/* Main icon — always visible */}
         <div
           style={{
-            width: expanded ? 28 : 40,
-            height: expanded ? 28 : 40,
-            minWidth: expanded ? 28 : 40,
-            borderRadius: expanded ? 8 : 10,
+            width: 40,
+            height: 40,
+            minWidth: 40,
+            borderRadius: 10,
             background: 'linear-gradient(135deg, #22d3ee, #06b6d4)',
             color: '#000',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0,
-            transition: 'width 0.2s ease, height 0.2s ease, min-width 0.2s ease, border-radius 0.2s ease',
           }}
         >
-          <BsGear size={expanded ? 13 : 16} />
+          <BsGear size={16} />
         </div>
 
         {expanded && (
@@ -108,55 +117,59 @@ export default function FloatingManagerWidget() {
             <button
               onClick={() => { resetCollapseTimer(); window.electronAPI.createQuickNoteWindow() }}
               style={{
-                width: 28, height: 28, minWidth: 28, borderRadius: 8,
+                width: 40, height: 40, minWidth: 40, borderRadius: 10,
                 background: 'rgba(255,255,255,0.08)', color: '#fff',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: 'none', cursor: 'pointer', outline: 'none',
               }}
               title="Create Note"
             >
-              <FiPlus size={13} />
+              <FiPlus size={16} />
             </button>
 
             <button
-              onClick={() => { resetCollapseTimer(); window.electronAPI.toggleNotesVisibility() }}
+              onClick={async () => {
+                resetCollapseTimer()
+                const visible = await window.electronAPI.toggleNotesVisibility()
+                setNotesVisible(visible)
+              }}
               style={{
-                width: 28, height: 28, minWidth: 28, borderRadius: 8,
+                width: 40, height: 40, minWidth: 40, borderRadius: 10,
                 background: 'rgba(255,255,255,0.08)', color: '#fff',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: 'none', cursor: 'pointer', outline: 'none',
               }}
-              title="Show / Hide Notes"
+              title={notesVisible ? 'Hide Notes' : 'Show Notes'}
             >
-              <FiEye size={13} />
+              {notesVisible ? <FiEye size={16} /> : <FiEyeOff size={16} />}
             </button>
 
             <button
               onClick={() => { resetCollapseTimer(); window.electronAPI.magnetNotes() }}
               style={{
-                width: 28, height: 28, minWidth: 28, borderRadius: 8,
+                width: 40, height: 40, minWidth: 40, borderRadius: 10,
                 background: 'rgba(255,255,255,0.08)', color: '#fff',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: 'none', cursor: 'pointer', outline: 'none',
               }}
               title="Rearrange Notes"
             >
-              <FiMove size={13} />
+              <FiMove size={16} />
             </button>
 
-            <div style={{ width: 1, height: 18, background: 'rgba(255,255,255,0.08)', flexShrink: 0 }} />
+            <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.1)', flexShrink: 0 }} />
 
             <button
               onClick={() => window.electronAPI.closeFloatingManager()}
               style={{
-                width: 28, height: 28, minWidth: 28, borderRadius: 8,
-                background: 'rgba(239,68,68,0.12)', color: '#fca5a5',
+                width: 40, height: 40, minWidth: 40, borderRadius: 10,
+                background: 'rgba(255, 0, 0, 1)', color: '#000000ff',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: 'none', cursor: 'pointer', outline: 'none',
               }}
               title="Close Widget"
             >
-              <FiX size={13} />
+              <FiX size={16} />
             </button>
           </>
         )}

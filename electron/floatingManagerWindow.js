@@ -15,9 +15,9 @@ export function createFloatingManagerWindow() {
   const { width, height } = display.workAreaSize
 
   floatingManagerWindow = new BrowserWindow({
-    width: 260,
+    width: 44,
     height: 44,
-    x: width - 260,
+    x: width - 48,
     y: height - 48,
     frame: false,
     transparent: true,
@@ -60,10 +60,21 @@ export function closeFloatingManagerWindow() {
   }
 }
 
+export function resizeManagerWindow(newWidth) {
+  if (floatingManagerWindow && !floatingManagerWindow.isDestroyed()) {
+    const [oldX] = floatingManagerWindow.getPosition()
+    const [oldW] = floatingManagerWindow.getSize()
+    // Anchor to the right: shift x so the right edge stays in place
+    const newX = oldX + oldW - newWidth
+    floatingManagerWindow.setBounds({ x: newX, width: newWidth })
+  }
+}
+
 export function resetManagerPosition() {
   if (floatingManagerWindow && !floatingManagerWindow.isDestroyed()) {
     const display = screen.getPrimaryDisplay()
     const { width, height } = display.workAreaSize
-    floatingManagerWindow.setPosition(width - 260, height - 48)
+    const [w] = floatingManagerWindow.getSize()
+    floatingManagerWindow.setPosition(width - w - 4, height - 48)
   }
 }
