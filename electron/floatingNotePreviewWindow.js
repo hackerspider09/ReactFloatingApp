@@ -73,3 +73,10 @@ export function showAllPreviewWindows() {
     }
   })
 }
+
+export function closeAllPreviewWindows() {
+  previewWindows.forEach((win) => {
+    if (!win.isDestroyed()) win.close()
+  })
+  previewWindows.clear()
+}

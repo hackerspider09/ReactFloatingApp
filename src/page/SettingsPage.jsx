@@ -159,11 +159,11 @@ export default function SettingsPage({ settings, onChange }) {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xl font-semibold text-white mb-2">
-                Hide Previews with Notes
+                Close Previews on Hide
               </h3>
               <p className="text-white/50 text-sm">
-                When enabled, the eye icon also hides open note previews.
-                When disabled, previews stay open while note widgets are hidden.
+                <strong className="text-white/70">Off:</strong> Eye icon hides both widgets and previews — unhiding restores all.<br />
+                <strong className="text-white/70">On:</strong> Eye icon closes previews permanently — unhiding only restores widgets.
               </p>
             </div>
 

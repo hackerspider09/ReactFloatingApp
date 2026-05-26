@@ -7,7 +7,7 @@ import { getURL, getPreloadPath } from './utils.js'
 import { createFloatingManagerWindow, closeFloatingManagerWindow, resetManagerPosition, resizeManagerWindow } from './floatingManagerWindow.js'
 import { createQuickNoteWindow } from './quickNoteWindow.js'
 import { showFloatingNotes, hideFloatingNotes } from './floatingNotesWindow.js'
-import { createFloatingNotePreviewWindow, hideAllPreviewWindows, showAllPreviewWindows } from './floatingNotePreviewWindow.js'
+import { createFloatingNotePreviewWindow, hideAllPreviewWindows, showAllPreviewWindows, closeAllPreviewWindows } from './floatingNotePreviewWindow.js'
 
 const { app, BrowserWindow, ipcMain } = electron
 
@@ -126,12 +126,21 @@ app.whenReady().then(() => {
 
     if (floatingNotesVisible) {
       hideFloatingNotes()
-      if (settings?.hidePreviewsWithNotes) hideAllPreviewWindows()
+      if (settings?.hidePreviewsWithNotes) {
+        // Close previews permanently — they won't restore on unhide
+        closeAllPreviewWindows()
+      } else {
+        // Soft-hide previews so they restore when notes are shown again
+        hideAllPreviewWindows()
+      }
       floatingNotesVisible = false
       console.log('floating notes hidden')
     } else {
       showFloatingNotes(notes, settings?.maxFloatingNotes)
-      if (settings?.hidePreviewsWithNotes) showAllPreviewWindows()
+      if (!settings?.hidePreviewsWithNotes) {
+        // Restore soft-hidden previews (only when toggle is OFF)
+        showAllPreviewWindows()
+      }
       floatingNotesVisible = true
       console.log('floating notes shown')
     }
