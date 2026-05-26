@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { FiPlus, FiEye, FiEyeOff, FiMove, FiX } from 'react-icons/fi'
+import { FiPlus, FiEye, FiEyeOff, FiX } from 'react-icons/fi'
+import { TbMagnet } from 'react-icons/tb'
 import { BsGear } from "react-icons/bs";
 
 const COLLAPSED_W = 44
@@ -115,7 +116,7 @@ export default function FloatingManagerWidget() {
       },
     },
     {
-      icon: <FiMove size={16} />,
+      icon: <TbMagnet size={18} />,
       title: 'Rearrange Notes',
       onClick: () => { resetCollapseTimer(); window.electronAPI.magnetNotes() },
     },
