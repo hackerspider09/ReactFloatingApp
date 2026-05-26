@@ -91,3 +91,34 @@ File: [`.github/workflows/build-and-release.yaml`](.github/workflows/build-and-r
 ├── release/           # electron-builder output (generated)
 └── .github/workflows/ # CI/CD pipelines
 ```
+
+---
+
+## Bundle Size Notes
+
+Electron apps are inherently large because they embed a full Chromium engine. The irreducible minimum is ~200 MB (the Electron binary itself). Here's how this project keeps the **app-specific** portion small:
+
+### Why deps are split the way they are
+
+| Package | Location | Reason |
+|---------|----------|--------|
+| `react`, `react-dom`, `react-icons` | `devDependencies` | Vite bundles these into `dist/` at build time — they are NOT needed at runtime |
+| `@tailwindcss/vite`, `tailwindcss` | `devDependencies` | CSS-only build tool, output is already in `dist/index.css` |
+| `electron-store` | `dependencies` | Used by the Electron main process at runtime — must be present in production |
+
+### What was excluded from the installer
+
+- `dxcompiler.dll` (~24 MB) — DirectX shader compiler, only needed for WebGPU apps
+- `LICENSES.chromium.html` (~18 MB) — Chromium license text file, not needed at runtime
+- `node_modules/**/*` removed from `files` — electron-builder now only auto-includes production `dependencies` (just `electron-store`)
+
+### Size breakdown (Windows, after optimizations)
+
+| Component | Size | Notes |
+|-----------|------|-------|
+| `FloatNote.exe` (Electron binary) | ~213 MB | Chromium + Node.js — irreducible |
+| `app.asar` (your code) | ~5 MB | React app + electron-store only |
+| Chromium DLLs + resources | ~60 MB | Irreducible Chromium runtime |
+| **Total installed** | **~280 MB** | Down from ~449 MB |
+
+> Further reduction is only possible by switching away from Electron entirely (e.g. Tauri uses the OS WebView instead of bundling Chromium, resulting in ~10 MB installers).
