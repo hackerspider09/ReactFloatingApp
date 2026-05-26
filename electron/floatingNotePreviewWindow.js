@@ -58,3 +58,18 @@ export function createFloatingNotePreviewWindow(noteId) {
     previewWindows.delete(noteId)
   })
 }
+
+export function hideAllPreviewWindows() {
+  previewWindows.forEach((win) => {
+    if (!win.isDestroyed()) win.hide()
+  })
+}
+
+export function showAllPreviewWindows() {
+  previewWindows.forEach((win) => {
+    if (!win.isDestroyed()) {
+      win.show()
+      win.setAlwaysOnTop(true)
+    }
+  })
+}

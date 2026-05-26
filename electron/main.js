@@ -7,7 +7,7 @@ import { getURL, getPreloadPath } from './utils.js'
 import { createFloatingManagerWindow, closeFloatingManagerWindow, resetManagerPosition, resizeManagerWindow } from './floatingManagerWindow.js'
 import { createQuickNoteWindow } from './quickNoteWindow.js'
 import { showFloatingNotes, hideFloatingNotes } from './floatingNotesWindow.js'
-import { createFloatingNotePreviewWindow } from './floatingNotePreviewWindow.js'
+import { createFloatingNotePreviewWindow, hideAllPreviewWindows, showAllPreviewWindows } from './floatingNotePreviewWindow.js'
 
 const { app, BrowserWindow, ipcMain } = electron
 
@@ -126,10 +126,12 @@ app.whenReady().then(() => {
 
     if (floatingNotesVisible) {
       hideFloatingNotes()
+      hideAllPreviewWindows()
       floatingNotesVisible = false
       console.log('floating notes hidden')
     } else {
       showFloatingNotes(notes, settings?.maxFloatingNotes)
+      showAllPreviewWindows()
       floatingNotesVisible = true
       console.log('floating notes shown')
     }
