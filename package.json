@@ -35,14 +35,7 @@
       "src/data/**/*",
       "package.json"
     ],
-    "extraFiles": [
-      {
-        "filter": [
-          "!dxcompiler.dll",
-          "!LICENSES.chromium.html"
-        ]
-      }
-    ],
+
     "linux": {
       "icon": "build/icon.png",
       "target": [
