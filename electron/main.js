@@ -200,6 +200,14 @@ app.whenReady().then(() => {
   })
 
 
+  // Transparent window hit-testing — lets renderer toggle click-through on transparent areas
+  ipcMain.on('window:set-ignore-mouse-events', (event, ignore, options) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
+    if (win && !win.isDestroyed()) {
+      win.setIgnoreMouseEvents(ignore, options)
+    }
+  })
+
   // create note window
   ipcMain.handle('note:create-window', () => {
     createQuickNoteWindow()

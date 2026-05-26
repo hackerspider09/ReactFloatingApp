@@ -34,4 +34,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // startup ipc
   setAutoLaunch: (enabled) => ipcRenderer.invoke('settings:set-autolaunch', enabled),
+
+  // transparent window hit-testing
+  setIgnoreMouseEvents: (ignore, options) => ipcRenderer.send('window:set-ignore-mouse-events', ignore, options),
 })

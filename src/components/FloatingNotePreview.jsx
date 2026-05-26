@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import NoteFormModal from './NoteFormModal'
 
 export default function FloatingNotePreview() {
   const [note, setNote] = useState(null)
   const [settings, setSettings] = useState({ confirmDelete: false })
   const [isEditing, setIsEditing] = useState(false)
+  const cardRef = useRef(null)
 
   useEffect(() => {
     async function load() {
@@ -20,6 +21,24 @@ export default function FloatingNotePreview() {
     }
 
     load()
+  }, [])
+
+  // Transparent-area click-through: only the card itself captures mouse events.
+  // Everything outside (transparent padding/gaps for short notes) passes through.
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      if (!cardRef.current) return
+      const rect = cardRef.current.getBoundingClientRect()
+      const isOverCard = (
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom
+      )
+      window.electronAPI?.setIgnoreMouseEvents(!isOverCard, { forward: true })
+    }
+    document.addEventListener('mousemove', onMouseMove)
+    return () => document.removeEventListener('mousemove', onMouseMove)
   }, [])
 
   useEffect(() => {
@@ -78,8 +97,9 @@ export default function FloatingNotePreview() {
   if (!note) return null
 
   return (
-    <div className="w-full h-full flex items-center justify-center p-4 overflow-hidden" style={{ background: 'transparent' }}>
+    <div className="preview-bg w-full h-full flex items-center justify-center p-4 overflow-hidden" style={{ background: 'transparent' }}>
       <div
+        ref={cardRef}
         className="w-[550px] max-w-[90vw] rounded-3xl shadow-2xl overflow-hidden"
         style={{ background: note.color }}
       >
