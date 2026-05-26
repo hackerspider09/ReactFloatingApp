@@ -20,36 +20,34 @@ jobs:
           - {os: "windows-latest", buildCmd: "npm run dist:win"}
           # - {os: "ubuntu-latest", buildCmd: "npm run dist:linux"}
 
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: setup js
-        uses: actions/setup-node@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20
 
-      - name: "Debug: JS version"
+      - name: "Debug: Node version"
         run: node --version
 
-      - name: install dependency
+      - name: Install dependencies
         run: npm i
-      
-      - name: build app
+
+      - name: Build app
         run: ${{matrix.envCmd.buildCmd}}
 
-      - name: debug
+      - name: Debug release output
         run: |
-          ls
           ls release
-          ls release/win-unpacked
 
-      - name: realse app
+      - name: Release app
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.tag }}
-          files: release/win-unpacked/FloatNote.exe
+          files: |
+            release/*Setup*.exe
+            release/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-            
