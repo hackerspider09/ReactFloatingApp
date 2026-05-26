@@ -1,25 +1,23 @@
-name: "Build and release application"
+name: "Build and Release"
 
 on:
   workflow_dispatch:
     inputs:
-      tag:
+      version:
+        description: "Release version (e.g. v1.0.0)"
         type: string
-        default: "v1"
+        required: true
+        default: "v1.0.0"
 
 permissions:
   contents: write
 
+# ─────────────────────────────────────────────
+# Windows Build
+# ─────────────────────────────────────────────
 jobs:
-  build_and_release:
-    runs-on: ${{matrix.envCmd.os}}
-
-    strategy:
-      matrix:
-        envCmd:
-          - {os: "windows-latest", buildCmd: "npm run dist:win"}
-          # - {os: "ubuntu-latest", buildCmd: "npm run dist:linux"}
-
+  build-windows:
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,25 +27,57 @@ jobs:
         with:
           node-version: 20
 
-      - name: "Debug: Node version"
-        run: node --version
+      - name: Set version from input
+        run: |
+          $v = "${{ github.event.inputs.version }}".TrimStart('v')
+          npm version $v --no-git-tag-version
 
       - name: Install dependencies
-        run: npm i
+        run: npm ci
 
-      - name: Build app
-        run: ${{matrix.envCmd.buildCmd}}
+      - name: Build Windows app
+        run: npm run dist:win
 
-      - name: Debug release output
-        run: |
-          ls release
-
-      - name: Release app
+      - name: Upload Windows release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.inputs.tag }}
-          files: |
-            release/*Setup*.exe
-            release/*.zip
+          tag_name: ${{ github.event.inputs.version }}
+          files: release/*Setup*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+# ─────────────────────────────────────────────
+# Linux Build (uncomment to enable)
+# ─────────────────────────────────────────────
+#  build-linux:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Setup Node.js
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: 20
+#
+#      - name: Set version from input
+#        run: |
+#          version="${{ github.event.inputs.version }}"
+#          version="${version#v}"
+#          npm version $version --no-git-tag-version
+#
+#      - name: Install dependencies
+#        run: npm ci
+#
+#      - name: Build Linux app
+#        run: npm run dist:linux
+#
+#      - name: Upload Linux release
+#        uses: softprops/action-gh-release@v2
+#        with:
+#          tag_name: ${{ github.event.inputs.version }}
+#          files: |
+#            release/*.AppImage
+#            release/*.deb
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
