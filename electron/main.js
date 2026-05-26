@@ -126,12 +126,12 @@ app.whenReady().then(() => {
 
     if (floatingNotesVisible) {
       hideFloatingNotes()
-      hideAllPreviewWindows()
+      if (settings?.hidePreviewsWithNotes) hideAllPreviewWindows()
       floatingNotesVisible = false
       console.log('floating notes hidden')
     } else {
       showFloatingNotes(notes, settings?.maxFloatingNotes)
-      showAllPreviewWindows()
+      if (settings?.hidePreviewsWithNotes) showAllPreviewWindows()
       floatingNotesVisible = true
       console.log('floating notes shown')
     }

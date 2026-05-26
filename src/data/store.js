@@ -9,6 +9,7 @@ const store = new Store({
       maxFloatingNotes: 5,
       launchOnStartup: true,
       managerLayout: 'bar',
+      hidePreviewsWithNotes: false,
     },
   },
 })
